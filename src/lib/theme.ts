@@ -5,8 +5,8 @@ export type Theme = 'light' | 'dark'
 export const THEME_STORAGE_KEY = 'theme'
 
 /**
- * Gets the current theme from localStorage or system preference.
- * Defaults to 'light' if not specified or system preference is light.
+ * Gets the current theme from localStorage.
+ * Defaults to 'light' when no choice is saved in localStorage (ignoring system dark preference).
  */
 export function getTheme(): Theme {
   if (typeof window === 'undefined') {
@@ -16,13 +16,6 @@ export function getTheme(): Theme {
   const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
   if (stored === 'dark' || stored === 'light') {
     return stored
-  }
-
-  if (
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  ) {
-    return 'dark'
   }
 
   return 'light'
@@ -60,7 +53,7 @@ export function toggleTheme(): Theme {
 }
 
 /**
- * Hydrate/init function: reads stored or system theme and applies it before first paint.
+ * Hydrate/init function: reads stored theme (defaulting to light) and applies it before first paint.
  */
 export function initTheme(): Theme {
   const initial = getTheme()

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T23:21:20.113Z",
+  "generatedAt": "2026-10-01T23:44:48.717Z",
   "collections": [
     {
       "name": "users",
@@ -243,6 +243,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "logoDark",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []

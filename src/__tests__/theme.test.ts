@@ -28,7 +28,7 @@ describe('Theme utility (theme.ts)', () => {
     expect(getTheme()).toBe('light')
   })
 
-  it('getTheme detects system dark mode when localStorage is empty', () => {
+  it('getTheme defaults to light even when system prefers dark if localStorage is empty', () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: query === '(prefers-color-scheme: dark)',
       media: query,
@@ -40,7 +40,7 @@ describe('Theme utility (theme.ts)', () => {
       dispatchEvent: vi.fn(),
     }))
 
-    expect(getTheme()).toBe('dark')
+    expect(getTheme()).toBe('light')
   })
 
   it('getTheme prioritizes localStorage over system preference', () => {

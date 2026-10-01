@@ -1,10 +1,40 @@
 import type { JSX } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Linkedin } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
+import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
+import { useRealtime } from '@/hooks/use-realtime'
+import { buildWhatsAppLink } from '@/lib/whatsapp'
 
 export function Footer(): JSX.Element {
   const currentYear = new Date().getFullYear()
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+
+  useEffect(() => {
+    getSiteSettings().then((res) => {
+      if (res) setSettings(res)
+    })
+  }, [])
+
+  useRealtime('site_settings', () => {
+    getSiteSettings().then((res) => {
+      if (res) setSettings(res)
+    })
+  })
+
+  // In dark footer background: prioritize logoDark if set, then normal logo, then fallback BrandLogo
+  const footerLogoUrl =
+    settings && settings.logoDark
+      ? getFileUrl('site_settings', settings.id, settings.logoDark)
+      : settings && settings.logo
+        ? getFileUrl('site_settings', settings.id, settings.logo)
+        : null
+
+  const footerWhatsAppUrl = buildWhatsAppLink(
+    '5521988831253',
+    'Olá! Gostaria de mais informações sobre os produtos Tasty Aromas e Sabores.',
+  )
 
   return (
     <footer className="mt-auto border-t border-primary/20 bg-[hsl(215,73%,14%)] text-slate-100 transition-colors">
@@ -14,10 +44,18 @@ export function Footer(): JSX.Element {
           <div className="space-y-3 lg:col-span-1">
             <div className="flex items-center gap-2.5">
               <div className="flex items-center">
-                <BrandLogo
-                  className="h-9 w-auto max-w-[120px] object-contain drop-shadow"
-                  alt="Tasty Aromas e Sabores"
-                />
+                {footerLogoUrl ? (
+                  <img
+                    src={footerLogoUrl}
+                    alt="Tasty Aromas e Sabores"
+                    className="h-9 w-auto max-w-[120px] object-contain drop-shadow"
+                  />
+                ) : (
+                  <BrandLogo
+                    className="h-9 w-auto max-w-[120px] object-contain drop-shadow"
+                    alt="Tasty Aromas e Sabores"
+                  />
+                )}
                 <span className="sr-only">TASTY</span>
               </div>
               <span className="font-display font-bold text-lg text-white tracking-tight">
@@ -57,7 +95,18 @@ export function Footer(): JSX.Element {
               <li>
                 <span className="font-medium text-slate-400 text-xs">Vendas:</span>{' '}
                 <a href="tel:+5521988831253" className="hover:text-accent transition-colors">
-                  21 98883-1253
+                  (21) 98883-1253
+                </a>
+              </li>
+              <li>
+                <span className="font-medium text-slate-400 text-xs">WhatsApp:</span>{' '}
+                <a
+                  href={footerWhatsAppUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-accent transition-colors inline-flex items-center gap-1 font-semibold text-accent"
+                >
+                  (21) 98883-1253
                 </a>
               </li>
               <li>

@@ -3,6 +3,7 @@ import pb from '@/lib/pocketbase/client'
 export interface SiteSettings {
   id: string
   logo?: string
+  logoDark?: string
   tagline?: string
   heroSlide1Title?: string
   heroSlide1Subtitle?: string
@@ -36,6 +37,7 @@ export interface SiteSettings {
 
 export interface SiteSettingsUpdateInput {
   logo?: File | string | null
+  logoDark?: File | string | null
   tagline?: string
   heroSlide1Title?: string
   heroSlide1Subtitle?: string

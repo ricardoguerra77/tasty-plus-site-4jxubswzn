@@ -33,6 +33,7 @@ export function TabGeneralSettings(): JSX.Element {
 
   // Files
   const [logoFile, setLogoFile] = useState<File | null | undefined>(undefined)
+  const [logoDarkFile, setLogoDarkFile] = useState<File | null | undefined>(undefined)
   const [heroImage1File, setHeroImage1File] = useState<File | null | undefined>(undefined)
   const [heroImage2File, setHeroImage2File] = useState<File | null | undefined>(undefined)
   const [heroImage3File, setHeroImage3File] = useState<File | null | undefined>(undefined)
@@ -144,6 +145,7 @@ export function TabGeneralSettings(): JSX.Element {
       }
 
       if (logoFile !== undefined) payload.logo = logoFile
+      if (logoDarkFile !== undefined) payload.logoDark = logoDarkFile
       if (heroImage1File !== undefined) payload.heroImage1 = heroImage1File
       if (heroImage2File !== undefined) payload.heroImage2 = heroImage2File
       if (heroImage3File !== undefined) payload.heroImage3 = heroImage3File
@@ -151,6 +153,7 @@ export function TabGeneralSettings(): JSX.Element {
       const updated = await saveSiteSettings(payload)
       setSettings(updated)
       setLogoFile(undefined)
+      setLogoDarkFile(undefined)
       setHeroImage1File(undefined)
       setHeroImage2File(undefined)
       setHeroImage3File(undefined)
@@ -220,17 +223,31 @@ export function TabGeneralSettings(): JSX.Element {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <ImageUploader
-            label="Logotipo da Empresa"
-            helperText="Formato recomendado: SVG ou PNG transparente (máx. 5MB)"
-            currentImageUrl={
-              settings?.id && settings.logo
-                ? getFileUrl('site_settings', settings.id, settings.logo)
-                : undefined
-            }
-            onFileSelect={(file) => setLogoFile(file)}
-            disabled={saving}
-          />
+          <div className="grid gap-6 md:grid-cols-2">
+            <ImageUploader
+              label="Logotipo da Empresa (Fundo Claro)"
+              helperText="Usada no modo claro. Recomendado: SVG ou PNG transparente (máx. 5MB)"
+              currentImageUrl={
+                settings?.id && settings.logo
+                  ? getFileUrl('site_settings', settings.id, settings.logo)
+                  : undefined
+              }
+              onFileSelect={(file) => setLogoFile(file)}
+              disabled={saving}
+            />
+
+            <ImageUploader
+              label="Logotipo para Fundo Escuro"
+              helperText="Usada no modo escuro e rodapé escuro. Recomendado: SVG ou PNG transparente (máx. 5MB)"
+              currentImageUrl={
+                settings?.id && settings.logoDark
+                  ? getFileUrl('site_settings', settings.id, settings.logoDark)
+                  : undefined
+              }
+              onFileSelect={(file) => setLogoDarkFile(file)}
+              disabled={saving}
+            />
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="tagline" className="text-sm font-semibold">

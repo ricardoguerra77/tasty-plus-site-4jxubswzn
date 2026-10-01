@@ -28,27 +28,11 @@ export function App(): JSX.Element {
                   </Suspense>
                 )
 
-                const isRoot = route.path === '/'
-                const relativePath = isRoot ? undefined : route.path.replace(/^\//, '')
-
                 if (route.requiredRole || route.allowedRoles) {
-                  return isRoot ? (
+                  return (
                     <Route
                       key={route.path}
-                      index
-                      element={
-                        <ProtectedRoute
-                          requiredRole={route.requiredRole}
-                          allowedRoles={route.allowedRoles}
-                        >
-                          {content}
-                        </ProtectedRoute>
-                      }
-                    />
-                  ) : (
-                    <Route
-                      key={route.path}
-                      path={relativePath}
+                      path={route.path}
                       element={
                         <ProtectedRoute
                           requiredRole={route.requiredRole}
@@ -61,11 +45,7 @@ export function App(): JSX.Element {
                   )
                 }
 
-                return isRoot ? (
-                  <Route key={route.path} index element={content} />
-                ) : (
-                  <Route key={route.path} path={relativePath} element={content} />
-                )
+                return <Route key={route.path} path={route.path} element={content} />
               })}
             </Route>
             <Route path="*" element={<NotFound />} />

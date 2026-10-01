@@ -3,7 +3,6 @@ import { NavLink, Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { mainNavLinks } from '@/config/navigation'
 import { DarkModeToggle } from '@/components/DarkModeToggle'
-import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { BrandLogo } from '@/components/BrandLogo'
 import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
 import { useRealtime } from '@/hooks/use-realtime'
@@ -12,6 +11,7 @@ export function Header(): JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
   const [scrolled, setScrolled] = useState<boolean>(false)
   const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const [isDark, setIsDark] = useState<boolean>(false)
 
   useEffect(() => {
     const handleScroll = (): void => {
@@ -19,6 +19,24 @@ export function Header(): JSX.Element {
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Listen to dark class mutations on document.documentElement
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    }
+    checkDark()
+
+    const observer = new MutationObserver(() => {
+      checkDark()
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -35,8 +53,10 @@ export function Header(): JSX.Element {
 
   const closeMobileMenu = (): void => setMobileMenuOpen(false)
 
+  // Use logoDark in dark mode (if present), else standard logo (if present)
+  const chosenLogo = isDark && settings?.logoDark ? settings.logoDark : settings?.logo
   const logoUrl =
-    settings && settings.logo ? getFileUrl('site_settings', settings.id, settings.logo) : null
+    settings && chosenLogo ? getFileUrl('site_settings', settings.id, chosenLogo) : null
 
   return (
     <header
@@ -46,32 +66,32 @@ export function Header(): JSX.Element {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
-          {/* Logo brand block */}
+          {/* Logo brand block — Enlarged logo height and responsiveness */}
           <Link
             to="/"
             onClick={closeMobileMenu}
-            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+            className="flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
           >
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt="Tasty Aromas e Sabores"
-                className="h-10 w-auto max-w-[140px] object-contain flex-shrink-0"
+                className="h-12 md:h-14 lg:h-16 w-auto max-w-[180px] md:max-w-[220px] object-contain flex-shrink-0 transition-transform group-hover:scale-[1.02]"
               />
             ) : (
               <div className="flex items-center flex-shrink-0">
                 <BrandLogo
-                  className="h-10 w-auto max-w-[140px] object-contain drop-shadow-sm group-hover:opacity-95 transition-opacity"
+                  className="h-12 md:h-14 lg:h-16 w-auto max-w-[180px] md:max-w-[220px] object-contain drop-shadow-sm group-hover:opacity-95 transition-all group-hover:scale-[1.02]"
                   alt="Tasty Aromas e Sabores"
                 />
                 <span className="sr-only">TASTY</span>
               </div>
             )}
             <div className="flex flex-col">
-              <span className="font-display font-bold text-lg md:text-xl text-primary leading-tight tracking-tight group-hover:text-accent transition-colors">
+              <span className="font-display font-bold text-lg md:text-xl lg:text-2xl text-primary leading-tight tracking-tight group-hover:text-accent transition-colors">
                 Tasty Aromas e Sabores
               </span>
-              <span className="hidden sm:inline text-xs text-muted-foreground font-medium leading-none">
+              <span className="hidden sm:inline text-xs md:text-sm text-muted-foreground font-medium leading-none mt-0.5">
                 {settings?.tagline || 'A fórmula certa para a sua empresa'}
               </span>
             </div>
@@ -110,10 +130,9 @@ export function Header(): JSX.Element {
             ))}
           </nav>
 
-          {/* Right cluster: Dark Mode + WhatsApp CTA + Hamburger */}
+          {/* Right cluster: Dark Mode + Hamburger (Header Fale Conosco button removed) */}
           <div className="flex items-center gap-2 md:gap-3">
             <DarkModeToggle />
-            <WhatsAppButton />
 
             {/* Mobile Hamburger toggle */}
             <button
@@ -154,10 +173,9 @@ export function Header(): JSX.Element {
             </nav>
 
             <div className="pt-3 border-t border-border/70 flex items-center justify-between gap-3">
-              <span className="text-xs text-muted-foreground font-medium">Tema & Atendimento</span>
+              <span className="text-xs text-muted-foreground font-medium">Tema</span>
               <div className="flex items-center gap-2">
                 <DarkModeToggle />
-                <WhatsAppButton iconOnlyOnMobile={false} />
               </div>
             </div>
           </div>
