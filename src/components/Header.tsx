@@ -69,10 +69,10 @@ export function Header(): JSX.Element {
             )}
             <div className="flex flex-col">
               <span className="font-display font-bold text-lg md:text-xl text-primary leading-tight tracking-tight group-hover:text-accent transition-colors">
-                Tasty Plus
+                Tasty Aromas e Sabores
               </span>
               <span className="hidden sm:inline text-xs text-muted-foreground font-medium leading-none">
-                {settings?.tagline || 'Tasty Aromas e Sabores'}
+                {settings?.tagline || 'A fórmula certa para a sua empresa'}
               </span>
             </div>
           </Link>

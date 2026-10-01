@@ -110,13 +110,13 @@ export default function Home(): JSX.Element {
   // WhatsApp link for Sample request
   const sampleWhatsAppUrl = buildWhatsAppLink(
     DEFAULT_SALES_PHONE,
-    'Olá! Gostaria de solicitar minha amostra grátis do Adoçante Dietético Tasty Plus.',
+    'Olá! Gostaria de solicitar minha amostra grátis do Adoçante Dietético Tasty Aromas e Sabores.',
   )
 
   // Floating WhatsApp link
   const floatingWhatsAppUrl = buildWhatsAppLink(
     DEFAULT_SALES_PHONE,
-    'Olá! Gostaria de atendimento comercial da Tasty Plus.',
+    'Olá! Gostaria de atendimento comercial da Tasty Aromas e Sabores.',
   )
 
   if (loading) {
@@ -259,7 +259,7 @@ export default function Home(): JSX.Element {
               Inovação e Rendimento
             </Badge>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary tracking-tight font-display">
-              Destaques Comerciais Tasty Plus
+              Destaques Comerciais Tasty Aromas e Sabores
             </h2>
             <p className="mt-3 text-muted-foreground text-sm sm:text-base">
               Soluções inovadoras desenvolvidas para maximizar o rendimento, a rentabilidade e o
@@ -426,7 +426,7 @@ export default function Home(): JSX.Element {
                   <a
                     href={buildWhatsAppLink(
                       DEFAULT_SALES_PHONE,
-                      'Olá! Gostaria de cotação e ficha técnica do NATU-COLA Tasty Plus.',
+                      'Olá! Gostaria de cotação e ficha técnica do NATU-COLA Tasty Aromas e Sabores.',
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -476,7 +476,7 @@ export default function Home(): JSX.Element {
             {/* Apresentação da empresa */}
             <div className="max-w-3xl space-y-4">
               <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full">
-                Sobre a Tasty Plus
+                Sobre a Tasty Aromas e Sabores
               </Badge>
               <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-primary">
                 A fórmula certa para a sua empresa
@@ -488,10 +488,10 @@ export default function Home(): JSX.Element {
                 />
               ) : (
                 <p className="text-muted-foreground leading-relaxed text-base">
-                  A Tasty Plus é referência nacional no desenvolvimento e fornecimento de aromas,
-                  extratos, corantes e aditivos para a indústria de alimentos e bebidas. Com mais de
-                  30 anos de experiência no setor, combinamos rigor científico e excelência
-                  operacional.
+                  A Tasty Aromas e Sabores é referência nacional no desenvolvimento e fornecimento
+                  de aromas, extratos, corantes e aditivos para a indústria de alimentos e bebidas.
+                  Com mais de 30 anos de experiência no setor, combinamos rigor científico e
+                  excelência operacional.
                 </p>
               )}
             </div>
@@ -567,7 +567,7 @@ export default function Home(): JSX.Element {
               Nossa Trajetória
             </Badge>
             <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-primary">
-              Linha do Tempo Tasty Plus
+              Linha do Tempo Tasty Aromas e Sabores
             </h2>
             <p className="mt-2 text-muted-foreground text-sm">
               Uma história de dedicação à inovação sensorial e química de alimentos.
@@ -637,7 +637,7 @@ export default function Home(): JSX.Element {
           href={floatingWhatsAppUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Atendimento via WhatsApp Tasty Plus"
+          aria-label="Atendimento via WhatsApp Tasty Aromas e Sabores"
           className="w-14 h-14 rounded-full bg-accent hover:bg-accent-dark text-accent-foreground flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <MessageCircle className="w-7 h-7" />

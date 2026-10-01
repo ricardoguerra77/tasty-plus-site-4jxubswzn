@@ -222,7 +222,7 @@ export default function Contato(): JSX.Element {
           Canais de Atendimento
         </Badge>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-primary tracking-tight">
-          Fale com a Tasty Plus
+          Fale com a Tasty Aromas e Sabores
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
           Tire dúvidas, solicite orçamentos para o seu volume de produção, peça amostras grátis de
@@ -468,7 +468,7 @@ export default function Contato(): JSX.Element {
           <div className="bg-card rounded-3xl border border-border p-3 overflow-hidden shadow-sm">
             <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-muted/60">
               <iframe
-                title="Localização Tasty Plus"
+                title="Localização Tasty Aromas e Sabores"
                 src={mapEmbedUrl}
                 width="100%"
                 height="100%"
@@ -495,7 +495,7 @@ export default function Contato(): JSX.Element {
             </DialogTitle>
             <DialogDescription className="text-muted-foreground text-center text-sm">
               Entraremos em contato em breve. Agradecemos pela sua mensagem e pelo interesse nas
-              soluções Tasty Plus.
+              soluções Tasty Aromas e Sabores.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center pt-4">

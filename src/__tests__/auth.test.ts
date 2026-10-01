@@ -39,7 +39,7 @@ describe('useAuth and Auth Logic', () => {
       collectionId: '_pb_users_auth_',
       collectionName: 'users',
       email: 'admin@tastyplus.com.br',
-      name: 'Admin Tasty Plus',
+      name: 'Admin Tasty Aromas e Sabores',
       role: 'admin',
       created: '2026-01-01',
       updated: '2026-01-01',

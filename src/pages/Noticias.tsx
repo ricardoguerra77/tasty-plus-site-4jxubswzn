@@ -68,7 +68,7 @@ export default function Noticias(): JSX.Element {
         {loading && (
           <StateFeedback
             title="Carregando publicações"
-            description="Buscando as notícias e comunicados mais recentes da Tasty Plus..."
+            description="Buscando as notícias e comunicados mais recentes da Tasty Aromas e Sabores..."
           />
         )}
 
@@ -120,7 +120,7 @@ export default function Noticias(): JSX.Element {
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 via-muted to-muted/80 text-muted-foreground">
                         <Newspaper className="w-12 h-12 stroke-[1.25] text-primary/40 mb-2" />
                         <span className="text-xs font-medium text-muted-foreground">
-                          Tasty Plus
+                          Tasty Aromas e Sabores
                         </span>
                       </div>
                     )}

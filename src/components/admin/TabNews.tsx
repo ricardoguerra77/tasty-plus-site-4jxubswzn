@@ -94,7 +94,7 @@ export function TabNews(): JSX.Element {
     setSlug('')
     setExcerpt('')
     setBody('')
-    setAuthor('Tasty Plus')
+    setAuthor('Tasty Aromas e Sabores')
     setPublishedAt(new Date().toISOString().slice(0, 10))
     setPublished(true)
     setImageFile(undefined)
@@ -456,7 +456,7 @@ export function TabNews(): JSX.Element {
                   id="news-author"
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="Tasty Plus"
+                  placeholder="Tasty Aromas e Sabores"
                   disabled={saving}
                 />
               </div>

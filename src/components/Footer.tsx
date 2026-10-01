@@ -21,12 +21,12 @@ export function Footer(): JSX.Element {
                 <span className="sr-only">TASTY</span>
               </div>
               <span className="font-display font-bold text-lg text-white tracking-tight">
-                Tasty Plus
+                Tasty Aromas e Sabores
               </span>
             </div>
             <p className="text-xs font-semibold text-accent">A fórmula certa para a sua empresa</p>
             <p className="text-xs text-slate-300 leading-relaxed">
-              [Sobre a Tasty Plus — texto institucional em breve]
+              [Sobre a Tasty Aromas e Sabores — texto institucional em breve]
             </p>
           </div>
 
@@ -142,7 +142,7 @@ export function Footer(): JSX.Element {
 
         {/* Bottom Bar: Copyright & Reference */}
         <div className="mt-12 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-          <p>© {currentYear} Tasty Plus — Tasty Aromas e Sabores. Todos os direitos reservados.</p>
+          <p>© {currentYear} Tasty Aromas e Sabores. Todos os direitos reservados.</p>
           <p>
             Referência:{' '}
             <a

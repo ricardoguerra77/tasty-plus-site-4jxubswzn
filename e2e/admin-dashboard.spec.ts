@@ -31,7 +31,7 @@ test.describe('Admin Dashboard Functional & Persistence Tests', () => {
     // Ensure we are on Configurações Gerais tab
     await expect(page.locator('text=Configurações Gerais do Site')).toBeVisible()
 
-    const uniqueTitle = `Inovação Tasty Plus ${Date.now()}`
+    const uniqueTitle = `Inovação Tasty Aromas e Sabores ${Date.now()}`
     const titleInput = page.locator('#heroSlide1Title')
     await titleInput.fill(uniqueTitle)
 

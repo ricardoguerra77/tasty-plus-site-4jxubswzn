@@ -12,7 +12,7 @@ test.describe('Tasty Plus Institutional Website - Desktop Navigation & Flow', ()
     await page.goto('/')
 
     // Check header logo and wordmark
-    await expect(page.getByText('Tasty Plus').first()).toBeVisible()
+    await expect(page.getByText('Tasty Aromas e Sabores').first()).toBeVisible()
     await expect(page.getByAltText('Tasty Aromas e Sabores').first()).toBeVisible()
 
     // Assert the 5 main nav links are visible in desktop header

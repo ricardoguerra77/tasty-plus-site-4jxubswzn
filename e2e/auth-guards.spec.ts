@@ -43,7 +43,7 @@ test.describe('Authentication and Route Guards', () => {
   test('public routes render normally without redirection', async ({ page }) => {
     await page.goto('/')
     await expect(page).toHaveURL('/')
-    await expect(page.locator('text=Tasty Plus')).toBeVisible()
+    await expect(page.locator('text=Tasty Aromas e Sabores').first()).toBeVisible()
 
     await page.goto('/produtos')
     await expect(page).toHaveURL('/produtos')

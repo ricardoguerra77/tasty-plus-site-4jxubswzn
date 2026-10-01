@@ -17,7 +17,7 @@ export default function Admin(): JSX.Element {
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Gerencie o conteúdo institucional, catálogo de produtos, representantes e notícias da
-          Tasty Plus.
+          Tasty Aromas e Sabores.
         </p>
       </div>
 

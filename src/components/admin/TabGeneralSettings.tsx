@@ -392,7 +392,7 @@ export function TabGeneralSettings(): JSX.Element {
         <CardHeader>
           <CardTitle className="text-lg">Textos Institucionais</CardTitle>
           <CardDescription>
-            Apresentação, missão, visão, valores e trajetória histórica da Tasty Plus.
+            Apresentação, missão, visão, valores e trajetória histórica da Tasty Aromas e Sabores.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

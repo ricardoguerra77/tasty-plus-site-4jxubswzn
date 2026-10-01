@@ -122,7 +122,8 @@ export default function Login(): JSX.Element {
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Acesso Restrito</CardTitle>
           <CardDescription>
-            Entre com suas credenciais para acessar o painel administrativo da Tasty Plus.
+            Entre com suas credenciais para acessar o painel administrativo da Tasty Aromas e
+            Sabores.
           </CardDescription>
         </CardHeader>
         <CardContent>

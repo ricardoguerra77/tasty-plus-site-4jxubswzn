@@ -12,7 +12,7 @@ export function WhatsAppButton({
   iconOnlyOnMobile = true,
   phoneNumber = '5521988831253',
 }: WhatsAppButtonProps): JSX.Element {
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent('Olá! Gostaria de mais informações sobre os produtos Tasty Plus.')}`
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent('Olá! Gostaria de mais informações sobre os produtos Tasty Aromas e Sabores.')}`
 
   return (
     <a

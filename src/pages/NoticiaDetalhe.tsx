@@ -218,7 +218,7 @@ export default function NoticiaDetalhe(): JSX.Element {
             <footer className="pt-10 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Newspaper className="w-5 h-5 text-accent" />
-                <span>Tasty Plus — Soluções em Aromas, Extratos e Ingredientes</span>
+                <span>Tasty Aromas e Sabores — Soluções em Aromas, Extratos e Ingredientes</span>
               </div>
               <Button
                 asChild

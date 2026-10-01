@@ -94,7 +94,7 @@ describe('Editorial Acceptance Functional Scenarios (Playwright / Functional Acc
       title: 'Novo Sabor Frutas Vermelhas em Desenvolvimento',
       slug: 'novo-sabor-frutas-vermelhas',
       excerpt: 'Artigo oficial lançado',
-      body: '<p>A Tasty Plus tem o prazer de anunciar o lançamento do novo sabor.</p>',
+      body: '<p>A Tasty Aromas e Sabores tem o prazer de anunciar o lançamento do novo sabor.</p>',
       published: true,
       publishedAt: '2026-04-01T10:00:00.000Z',
     }
@@ -208,14 +208,14 @@ describe('Editorial Acceptance Functional Scenarios (Playwright / Functional Acc
 
     const updatedSettings = {
       id: 'settings_01',
-      tagline: 'Nova Tagline Tasty Plus 2026',
+      tagline: 'Nova Tagline Tasty Aromas e Sabores 2026',
       heroSlide1Title: 'Liderança Tecnológica em Aromas Industriais',
     }
 
     vi.spyOn(pb.collection('site_settings'), 'update').mockResolvedValue(updatedSettings as never)
     const result = await pb.collection('site_settings').update('settings_01', updatedSettings)
 
-    expect(result.tagline).toBe('Nova Tagline Tasty Plus 2026')
+    expect(result.tagline).toBe('Nova Tagline Tasty Aromas e Sabores 2026')
     expect(result.heroSlide1Title).toBe('Liderança Tecnológica em Aromas Industriais')
   })
 

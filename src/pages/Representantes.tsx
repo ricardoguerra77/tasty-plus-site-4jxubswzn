@@ -87,7 +87,7 @@ export default function Representantes(): JSX.Element {
   // Invitation whatsapp link
   const repApplicationWhatsApp = buildWhatsAppLink(
     DEFAULT_SALES_PHONE,
-    'Olá! Tenho interesse em ser um Representante Comercial / Distribuidor da Tasty Plus na minha região.',
+    'Olá! Tenho interesse em ser um Representante Comercial / Distribuidor da Tasty Aromas e Sabores na minha região.',
   )
 
   return (
@@ -101,8 +101,8 @@ export default function Representantes(): JSX.Element {
           Nossos Representantes
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-          Encontre o representante ou distribuidor Tasty Plus mais próximo da sua indústria.
-          Atendimento técnico, envio de catálogos e amostras para a sua empresa.
+          Encontre o representante ou distribuidor Tasty Aromas e Sabores mais próximo da sua
+          indústria. Atendimento técnico, envio de catálogos e amostras para a sua empresa.
         </p>
       </div>
 
@@ -166,7 +166,7 @@ export default function Representantes(): JSX.Element {
                   const repWhatsAppUrl = rep.whatsapp
                     ? buildWhatsAppLink(
                         rep.whatsapp,
-                        `Olá ${rep.name}, gostaria de atendimento comercial da Tasty Plus para minha empresa.`,
+                        `Olá ${rep.name}, gostaria de atendimento comercial da Tasty Aromas e Sabores para minha empresa.`,
                       )
                     : null
 
@@ -265,7 +265,7 @@ export default function Representantes(): JSX.Element {
               Expansão Comercial
             </Badge>
             <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white">
-              Seja um Representante Tasty Plus na sua região
+              Seja um Representante Tasty Aromas e Sabores na sua região
             </h2>
             <p className="text-sm text-slate-200 max-w-xl leading-relaxed">
               Você já atua no fornecimento para indústrias de bebidas, laticínios, panificação ou
