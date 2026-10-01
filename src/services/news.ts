@@ -36,11 +36,37 @@ export async function listNews(options?: { all?: boolean; sort?: string }): Prom
   return records
 }
 
-export async function getNewsBySlug(slug: string): Promise<NewsArticle | null> {
+export async function getNewsBySlug(
+  slug: string,
+  options?: { publicOnly?: boolean },
+): Promise<NewsArticle | null> {
   try {
-    const record = await pb.collection('news').getFirstListItem<NewsArticle>(`slug = "${slug}"`, {
+    // If publicOnly is requested, enforce published = true in the filter
+    const baseFilter = `slug = "${slug}"`
+    const filter = options?.publicOnly ? `${baseFilter} && published = true` : baseFilter
+    const record = await pb.collection('news').getFirstListItem<NewsArticle>(filter, {
       requestKey: null,
     })
+    if (options?.publicOnly && !record.published) {
+      return null
+    }
+    return record
+  } catch {
+    return null
+  }
+}
+
+export async function getNewsById(
+  id: string,
+  options?: { publicOnly?: boolean },
+): Promise<NewsArticle | null> {
+  try {
+    const record = await pb.collection('news').getOne<NewsArticle>(id, {
+      requestKey: null,
+    })
+    if (options?.publicOnly && !record.published) {
+      return null
+    }
     return record
   } catch {
     return null

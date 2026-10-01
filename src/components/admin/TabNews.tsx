@@ -28,25 +28,25 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
-import { Plus, Edit2, Trash2, Loader2, Newspaper, Calendar, User } from 'lucide-react'
-
-function slugify(text: string): string {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-}
+import { generateSlug } from '@/lib/news-helpers'
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Loader2,
+  Newspaper,
+  Calendar,
+  Eye,
+  EyeOff,
+  RefreshCw,
+} from 'lucide-react'
 
 export function TabNews(): JSX.Element {
   const { toast } = useToast()
   const [newsList, setNewsList] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [saving, setSaving] = useState<boolean>(false)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
@@ -66,10 +66,12 @@ export function TabNews(): JSX.Element {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false)
   const [articleToDelete, setArticleToDelete] = useState<NewsArticle | null>(null)
 
+  const [deleting, setDeleting] = useState<boolean>(false)
+
   const loadData = async (): Promise<void> => {
     try {
       setLoading(true)
-      const data = await listNews({ all: true })
+      const data = await listNews({ all: true, sort: '-publishedAt,-created' })
       setNewsList(data)
     } catch (err) {
       toast({
@@ -115,7 +117,8 @@ export function TabNews(): JSX.Element {
   const handleTitleChange = (val: string): void => {
     setTitle(val)
     if (!editingArticle) {
-      setSlug(slugify(val))
+      const otherSlugs = newsList.map((n) => n.slug)
+      setSlug(generateSlug(val, otherSlugs))
     }
   }
 
@@ -176,9 +179,35 @@ export function TabNews(): JSX.Element {
     }
   }
 
+  const handleTogglePublish = async (article: NewsArticle): Promise<void> => {
+    try {
+      setTogglingId(article.id)
+      const nextStatus = !article.published
+      await updateNews(article.id, { published: nextStatus })
+      toast({
+        title: nextStatus ? 'Notícia publicada' : 'Notícia despublicada',
+        description: nextStatus
+          ? `"${article.title}" agora está visível publicamente no portal.`
+          : `"${article.title}" foi alterada para rascunho e oculta ao público.`,
+      })
+      setNewsList((prev) =>
+        prev.map((item) => (item.id === article.id ? { ...item, published: nextStatus } : item)),
+      )
+    } catch (err) {
+      toast({
+        title: 'Erro ao alternar publicação',
+        description: getErrorMessage(err),
+        variant: 'destructive',
+      })
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
   const handleDelete = async (): Promise<void> => {
     if (!articleToDelete) return
     try {
+      setDeleting(true)
       await deleteNews(articleToDelete.id)
       toast({
         title: 'Notícia excluída',
@@ -193,6 +222,8 @@ export function TabNews(): JSX.Element {
         description: getErrorMessage(err),
         variant: 'destructive',
       })
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -235,88 +266,135 @@ export function TabNews(): JSX.Element {
         <div className="overflow-hidden rounded-lg border bg-card">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b bg-muted/40 font-medium text-muted-foreground">
+              <thead className="border-b bg-muted/40 font-semibold text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3 w-16">Foto</th>
-                  <th className="px-4 py-3">Título e Resumo</th>
-                  <th className="px-4 py-3">Autor</th>
-                  <th className="px-4 py-3">Data</th>
-                  <th className="px-4 py-3 text-center">Status</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
+                  <th scope="col" className="px-4 py-3 w-20">
+                    Imagem
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Título
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Data
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-center">
+                    Status
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right">
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {newsList.map((item) => (
-                  <tr key={item.id} className="hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3">
-                      {item.image ? (
-                        <img
-                          src={getFileUrl('news', item.id, item.image, '100x100')}
-                          alt={item.title}
-                          className="h-10 w-10 rounded-md object-cover border"
-                        />
-                      ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted/40 text-muted-foreground">
-                          <Newspaper className="h-5 w-5" />
+                {newsList.map((item) => {
+                  const isToggling = togglingId === item.id
+                  return (
+                    <tr key={item.id} className="hover:bg-muted/20 transition-colors">
+                      <td className="px-4 py-3">
+                        {item.image ? (
+                          <img
+                            src={getFileUrl('news', item.id, item.image, '120x80')}
+                            alt={item.title}
+                            className="h-12 w-16 rounded-md object-cover border"
+                          />
+                        ) : (
+                          <div className="flex h-12 w-16 items-center justify-center rounded-md border bg-muted/40 text-muted-foreground">
+                            <Newspaper className="h-5 w-5" />
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-semibold text-foreground text-base leading-snug">
+                          {item.title}
                         </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-foreground">{item.title}</div>
-                      {item.excerpt && (
-                        <div className="text-xs text-muted-foreground line-clamp-1 max-w-md">
-                          {item.excerpt}
+                        {item.excerpt && (
+                          <div className="text-xs text-muted-foreground line-clamp-1 max-w-md mt-0.5">
+                            {item.excerpt}
+                          </div>
+                        )}
+                        <div className="text-[11px] text-muted-foreground/70 font-mono mt-0.5">
+                          /noticias/{item.slug}
                         </div>
-                      )}
-                      <div className="text-[11px] text-muted-foreground/70 font-mono">
-                        /noticias/{item.slug}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      <span className="flex items-center gap-1 text-xs">
-                        <User className="h-3 w-3" /> {item.author || 'Tasty Plus'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      <span className="flex items-center gap-1 text-xs">
-                        <Calendar className="h-3 w-3" />
-                        {item.publishedAt
-                          ? new Date(item.publishedAt).toLocaleDateString('pt-BR')
-                          : '—'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <Badge variant={item.published ? 'default' : 'secondary'}>
-                        {item.published ? 'Publicada' : 'Rascunho'}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleOpenEdit(item)}
-                          aria-label={`Editar ${item.title}`}
-                          className="h-8 w-8 p-0"
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                        <span className="flex items-center gap-1.5 text-xs">
+                          <Calendar className="h-3.5 w-3.5 text-primary" />
+                          {item.publishedAt
+                            ? new Date(item.publishedAt).toLocaleDateString('pt-BR')
+                            : '—'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center whitespace-nowrap">
+                        <Badge
+                          variant={item.published ? 'default' : 'secondary'}
+                          className={
+                            item.published
+                              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                              : 'bg-muted text-muted-foreground border-border'
+                          }
                         >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setArticleToDelete(item)
-                            setDeleteDialogOpen(true)
-                          }}
-                          aria-label={`Excluir ${item.title}`}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {item.published ? 'Publicado' : 'Rascunho'}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTogglePublish(item)}
+                            disabled={isToggling}
+                            aria-label={
+                              item.published
+                                ? `Despublicar ${item.title}`
+                                : `Publicar ${item.title}`
+                            }
+                            className="min-h-[40px] px-2.5 text-xs flex items-center gap-1.5 cursor-pointer"
+                            title={item.published ? 'Alternar para rascunho' : 'Publicar notícia'}
+                          >
+                            {isToggling ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : item.published ? (
+                              <>
+                                <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
+                                <span className="hidden sm:inline">Despublicar</span>
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="h-3.5 w-3.5 text-emerald-600" />
+                                <span className="hidden sm:inline text-emerald-600 font-medium">
+                                  Publicar
+                                </span>
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenEdit(item)}
+                            aria-label={`Editar ${item.title}`}
+                            className="min-h-[40px] px-2.5 text-xs flex items-center gap-1 cursor-pointer"
+                          >
+                            <Edit2 className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">Editar</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setArticleToDelete(item)
+                              setDeleteDialogOpen(true)
+                            }}
+                            aria-label={`Excluir ${item.title}`}
+                            className="min-h-[40px] px-2 text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                            title="Excluir notícia"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -463,16 +541,25 @@ export function TabNews(): JSX.Element {
             <AlertDialogTitle>Excluir notícia?</AlertDialogTitle>
             <AlertDialogDescription>
               Esta ação não pode ser desfeita. A publicação{' '}
-              <strong>{articleToDelete?.title}</strong> será excluída permanentemente.
+              <strong>{articleToDelete?.title}</strong> será excluída permanentemente do banco de
+              dados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
+              disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Excluir
+              {deleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Excluindo...
+                </>
+              ) : (
+                'Excluir Notícia'
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
