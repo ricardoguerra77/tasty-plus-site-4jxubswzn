@@ -12,6 +12,16 @@ export interface FileValidationResult {
   error?: string
 }
 
+export const ALLOWED_IMAGE_MIME_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
+]
+
+export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 /**
@@ -83,4 +93,15 @@ export function validateFile(
   }
 
   return { valid: true }
+}
+
+export function validateImageFile(
+  file: File | null | undefined,
+  options: { required?: boolean; maxSizeBytes?: number } = {},
+): FileValidationResult {
+  return validateFile(file, {
+    required: options.required,
+    allowedMimeTypes: ALLOWED_IMAGE_MIME_TYPES,
+    maxSizeBytes: options.maxSizeBytes ?? MAX_IMAGE_SIZE_BYTES,
+  })
 }

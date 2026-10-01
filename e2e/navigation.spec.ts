@@ -135,16 +135,16 @@ test.describe('Tasty Plus Institutional Website - Desktop Navigation & Flow', ()
     await expect(page.getByRole('heading', { level: 1, name: 'Representantes' })).toBeVisible()
   })
 
-  test('renders institutional placeholders for /login, /admin and /admin/noticias', async ({
-    page,
-  }) => {
+  test('renders login page with Acesso Restrito for guarded routes', async ({ page }) => {
     await page.goto('/login')
-    await expect(page.getByRole('heading', { level: 1, name: 'Login' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 2, name: 'Acesso Restrito' })).toBeVisible()
 
+    // /admin redirects to /login when unauthenticated
     await page.goto('/admin')
-    await expect(page.getByRole('heading', { level: 1, name: 'Admin' })).toBeVisible()
+    await expect(page).toHaveURL(/\/login/)
 
+    // /admin/noticias redirects to /login when unauthenticated
     await page.goto('/admin/noticias')
-    await expect(page.getByRole('heading', { level: 1, name: 'Admin — Notícias' })).toBeVisible()
+    await expect(page).toHaveURL(/\/login/)
   })
 })

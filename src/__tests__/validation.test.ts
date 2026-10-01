@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { validateEmail, validateRequired, validateMinLength, validateFile } from '@/lib/validation'
+import {
+  validateEmail,
+  validateRequired,
+  validateMinLength,
+  validateFile,
+  validateImageFile,
+  ALLOWED_IMAGE_MIME_TYPES,
+} from '@/lib/validation'
 
 describe('Form Validation Utilities (lib/validation.ts)', () => {
   describe('validateRequired', () => {
@@ -90,6 +97,32 @@ describe('Form Validation Utilities (lib/validation.ts)', () => {
       })
       expect(result.valid).toBe(true)
       expect(result.error).toBeUndefined()
+    })
+  })
+
+  describe('validateImageFile', () => {
+    it('accepts valid web image formats', () => {
+      ALLOWED_IMAGE_MIME_TYPES.forEach((mime) => {
+        const file = new File(['mock content'], 'test-image', { type: mime })
+        const res = validateImageFile(file)
+        expect(res.valid).toBe(true)
+        expect(res.error).toBeUndefined()
+      })
+    })
+
+    it('rejects disallowed document types like PDF or text', () => {
+      const pdfFile = new File(['%PDF'], 'document.pdf', { type: 'application/pdf' })
+      const res = validateImageFile(pdfFile)
+      expect(res.valid).toBe(false)
+      expect(res.error).toContain('Formato de arquivo não suportado')
+    })
+
+    it('enforces 5MB default maximum size for images', () => {
+      const largeBlob = new Blob([new Uint8Array(6 * 1024 * 1024)], { type: 'image/jpeg' })
+      const largeFile = new File([largeBlob], 'photo.jpg', { type: 'image/jpeg' })
+      const res = validateImageFile(largeFile)
+      expect(res.valid).toBe(false)
+      expect(res.error).toContain('O arquivo excede o tamanho limite permitido de 5.0 MB.')
     })
   })
 })
