@@ -218,10 +218,10 @@ export default function Contato(): JSX.Element {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12 animate-fade-in">
       {/* Title */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge variant="outline" className="text-primary border-primary/30 font-semibold">
+        <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full">
           Canais de Atendimento
         </Badge>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-primary tracking-tight">
           Fale com a Tasty Plus
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -267,7 +267,7 @@ export default function Contato(): JSX.Element {
                   setName(e.target.value)
                   if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }))
                 }}
-                className={`rounded-xl ${errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                className={`rounded-xl focus-visible:ring-accent ${errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}`}
               />
               {errors.name && <p className="text-xs text-destructive font-medium">{errors.name}</p>}
             </div>
@@ -286,7 +286,7 @@ export default function Contato(): JSX.Element {
                   placeholder="(21) 98888-0000"
                   value={phone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
-                  className={`rounded-xl ${errors.phone ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={`rounded-xl focus-visible:ring-accent ${errors.phone ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
                 {errors.phone && (
                   <p className="text-xs text-destructive font-medium">{errors.phone}</p>
@@ -308,7 +308,7 @@ export default function Contato(): JSX.Element {
                     setEmail(e.target.value)
                     if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }))
                   }}
-                  className={`rounded-xl ${errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={`rounded-xl focus-visible:ring-accent ${errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
                 {errors.email && (
                   <p className="text-xs text-destructive font-medium">{errors.email}</p>
@@ -331,7 +331,7 @@ export default function Contato(): JSX.Element {
                   setMessage(e.target.value)
                   if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }))
                 }}
-                className={`rounded-xl resize-none ${errors.message ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                className={`rounded-xl resize-none focus-visible:ring-accent ${errors.message ? 'border-destructive focus-visible:ring-destructive' : ''}`}
               />
               {errors.message && (
                 <p className="text-xs text-destructive font-medium">{errors.message}</p>
@@ -343,7 +343,7 @@ export default function Contato(): JSX.Element {
               type="submit"
               disabled={submitting}
               size="lg"
-              className="w-full font-bold text-base rounded-xl shadow-md cursor-pointer"
+              className="w-full font-display font-bold text-base rounded-xl shadow-md cursor-pointer bg-accent hover:bg-accent-dark text-accent-foreground"
             >
               {submitting ? (
                 <>
@@ -486,11 +486,11 @@ export default function Contato(): JSX.Element {
       {/* SUCCESS MODAL */}
       <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
         <DialogContent className="sm:max-w-md text-center p-6 sm:p-8 rounded-2xl">
-          <div className="mx-auto w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2">
+          <div className="mx-auto w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-2">
             <CheckCircle2 className="w-10 h-10" />
           </div>
           <DialogHeader className="space-y-2">
-            <DialogTitle className="text-2xl font-extrabold text-foreground text-center">
+            <DialogTitle className="text-2xl font-extrabold text-foreground text-center font-display">
               Mensagem enviada com sucesso!
             </DialogTitle>
             <DialogDescription className="text-muted-foreground text-center text-sm">
@@ -502,7 +502,7 @@ export default function Contato(): JSX.Element {
             <Button
               type="button"
               onClick={() => setSuccessModalOpen(false)}
-              className="w-full sm:w-auto font-bold px-8 rounded-xl"
+              className="w-full sm:w-auto font-display font-bold px-8 rounded-xl bg-accent hover:bg-accent-dark text-accent-foreground"
             >
               Fechar
             </Button>

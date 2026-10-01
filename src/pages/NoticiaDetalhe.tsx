@@ -175,7 +175,7 @@ export default function NoticiaDetalhe(): JSX.Element {
                   </Badge>
                 )}
                 <span className="text-sm text-muted-foreground flex items-center gap-1">
-                  <Calendar className="w-4 h-4 text-primary" />
+                  <Calendar className="w-4 h-4 text-accent" />
                   <span>{formatDate(article.publishedAt || article.created)}</span>
                 </span>
                 {article.author && (
@@ -186,7 +186,7 @@ export default function NoticiaDetalhe(): JSX.Element {
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-primary tracking-tight leading-tight">
                 {article.title}
               </h1>
 
@@ -217,10 +217,14 @@ export default function NoticiaDetalhe(): JSX.Element {
             {/* Footer / CTA back to news */}
             <footer className="pt-10 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Newspaper className="w-5 h-5 text-primary" />
+                <Newspaper className="w-5 h-5 text-accent" />
                 <span>Tasty Plus — Soluções em Aromas, Extratos e Ingredientes</span>
               </div>
-              <Button asChild variant="outline">
+              <Button
+                asChild
+                variant="outline"
+                className="font-display font-bold border-primary/30 text-primary hover:bg-accent hover:text-accent-foreground hover:border-accent"
+              >
                 <Link to="/noticias" className="flex items-center gap-2">
                   <ArrowLeft className="w-4 h-4" />
                   <span>Ver todas as notícias</span>

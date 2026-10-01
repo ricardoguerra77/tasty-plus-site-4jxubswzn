@@ -5,6 +5,7 @@ import { getFileUrl } from '@/services/siteSettings'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { StateFeedback } from '@/components/StateFeedback'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Calendar, User, Newspaper, ArrowRight } from 'lucide-react'
 
@@ -46,15 +47,15 @@ export default function Noticias(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen py-10 lg:py-16">
+    <div className="min-h-screen py-10 lg:py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wide uppercase mb-3">
-            <Newspaper className="w-3.5 h-3.5" />
+          <Badge className="bg-accent text-accent-foreground text-xs font-display font-semibold tracking-wide uppercase mb-3 px-3.5 py-1 rounded-full shadow-sm">
+            <Newspaper className="w-3.5 h-3.5 mr-1.5" />
             <span>Notícias & Comunicados</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight">
+          </Badge>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-primary tracking-tight">
             Notícias e Tendências em Aromas
           </h1>
           <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
@@ -128,7 +129,7 @@ export default function Noticias(): JSX.Element {
                   <CardHeader className="p-6 pb-2 space-y-2 flex-none">
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground font-medium">
                       <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-primary" />
+                        <Calendar className="w-3.5 h-3.5 text-accent" />
                         <span>{formatDate(item.publishedAt || item.created)}</span>
                       </span>
                       {item.author && (
@@ -138,10 +139,10 @@ export default function Noticias(): JSX.Element {
                         </span>
                       )}
                     </div>
-                    <h2 className="text-xl font-bold text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                    <h2 className="text-xl font-display font-bold text-primary leading-snug group-hover:text-accent transition-colors line-clamp-2">
                       <Link
                         to={articleUrl}
-                        className="focus:outline-none focus-visible:underline focus-visible:ring-2 focus-visible:ring-primary rounded"
+                        className="focus:outline-none focus-visible:underline focus-visible:ring-2 focus-visible:ring-ring rounded"
                       >
                         {item.title}
                       </Link>
@@ -165,7 +166,7 @@ export default function Noticias(): JSX.Element {
                     <Button
                       asChild
                       variant="outline"
-                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all font-semibold"
+                      className="w-full font-display font-bold border-primary/30 text-primary group-hover:bg-accent group-hover:text-accent-foreground group-hover:border-accent transition-all"
                     >
                       <Link
                         to={articleUrl}

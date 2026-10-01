@@ -1,7 +1,7 @@
 /* Global styles - Theme, font, utilities, animations and global components */
 
-/* CHANGE THE FONT BELOW TO WHATEVER YOU WANT */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+/* Typography: Montserrat for display/headers/buttons, Plus Jakarta Sans for body */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,69 +9,87 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 215 25% 15%;
-    --primary: 152 68% 40%;
+    --background: 220 20% 99%;
+    --foreground: 215 73% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 73% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 73% 16%;
+    --primary: 215 73% 16%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 152 30% 95%;
-    --destructive: 0 84% 60%;
-    --accent: 27 90% 55%;
-    --border: 215 20% 90%;
-    --ring: 152 68% 40%;
+    --primary-light: 214 60% 96%;
+    --secondary: 214 60% 96%;
+    --secondary-foreground: 215 73% 16%;
+    --muted: 215 25% 94%;
+    --muted-foreground: 215 20% 42%;
+    --accent: 355 78% 56%;
+    --accent-foreground: 0 0% 100%;
+    --accent-dark: 357 74% 46%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 25% 88%;
+    --input: 215 25% 88%;
+    --ring: 355 78% 56%;
     --radius: 0.75rem;
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
-    --secondary-foreground: 215 25% 15%;
-    --muted: 215 20% 96%;
-    --muted-foreground: 215 16% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive-foreground: 0 0% 100%;
-    --input: 215 20% 90%;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 215 25% 15%;
-    --sidebar-primary: 152 68% 40%;
+    --sidebar-background: 220 20% 98%;
+    --sidebar-foreground: 215 73% 16%;
+    --sidebar-primary: 215 73% 16%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 152 30% 95%;
-    --sidebar-accent-foreground: 215 25% 15%;
-    --sidebar-border: 215 20% 90%;
-    --sidebar-ring: 152 68% 40%;
+    --sidebar-accent: 214 60% 96%;
+    --sidebar-accent-foreground: 215 73% 16%;
+    --sidebar-border: 215 25% 88%;
+    --sidebar-ring: 355 78% 56%;
   }
 
   .dark {
-    --background: 215 30% 10%;
-    --foreground: 0 0% 95%;
-    --primary: 152 68% 45%;
+    --background: 215 45% 9%;
+    --foreground: 214 32% 95%;
+    --card: 215 40% 12%;
+    --card-foreground: 214 32% 95%;
+    --popover: 215 40% 12%;
+    --popover-foreground: 214 32% 95%;
+    --primary: 215 65% 32%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 20% 18%;
-    --secondary-foreground: 0 0% 95%;
-    --destructive: 0 84% 60%;
-    --accent: 27 90% 55%;
-    --border: 215 20% 20%;
-    --ring: 152 68% 45%;
+    --primary-light: 215 35% 18%;
+    --secondary: 215 35% 18%;
+    --secondary-foreground: 214 32% 95%;
+    --muted: 215 30% 16%;
+    --muted-foreground: 215 20% 68%;
+    --accent: 355 78% 56%;
+    --accent-foreground: 0 0% 100%;
+    --accent-dark: 357 74% 46%;
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 30% 20%;
+    --input: 215 30% 20%;
+    --ring: 355 78% 56%;
     --radius: 0.75rem;
 
-    --card: 215 28% 13%;
-    --card-foreground: 0 0% 95%;
-    --popover: 215 28% 13%;
-    --popover-foreground: 0 0% 95%;
-    --muted: 215 20% 18%;
-    --muted-foreground: 215 15% 65%;
-    --accent-foreground: 0 0% 100%;
-    --destructive-foreground: 0 0% 100%;
-    --input: 215 20% 20%;
-
-    --sidebar-background: 215 30% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 152 68% 45%;
+    --sidebar-background: 215 45% 9%;
+    --sidebar-foreground: 214 32% 95%;
+    --sidebar-primary: 215 65% 32%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 20% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 215 20% 20%;
-    --sidebar-ring: 152 68% 45%;
+    --sidebar-accent: 215 35% 18%;
+    --sidebar-accent-foreground: 214 32% 95%;
+    --sidebar-border: 215 30% 20%;
+    --sidebar-ring: 355 78% 56%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 
   /* NEVER REMOVE THIS */

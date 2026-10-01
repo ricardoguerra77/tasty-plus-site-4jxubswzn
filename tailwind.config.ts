@@ -28,7 +28,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter var', 'system-ui', 'sans-serif'],
-        display: ['"Plus Jakarta Sans"', 'Inter var', 'system-ui', 'sans-serif'],
+        display: ['Montserrat', '"Plus Jakarta Sans"', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -39,6 +39,7 @@ export default {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          light: 'hsl(var(--primary-light))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -55,6 +56,7 @@ export default {
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
+          dark: 'hsl(var(--accent-dark))',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',

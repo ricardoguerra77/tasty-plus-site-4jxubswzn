@@ -20,7 +20,7 @@ export function WhatsAppButton({
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Conversar no WhatsApp"
-      className={`inline-flex items-center justify-center gap-2 font-semibold text-white bg-[#25D366] hover:bg-[#20ba59] active:scale-95 transition-all shadow-sm rounded-lg ${
+      className={`inline-flex items-center justify-center gap-2 font-display font-bold text-accent-foreground bg-accent hover:bg-accent-dark active:scale-95 transition-all shadow-sm rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
         iconOnlyOnMobile ? 'w-10 h-10 md:w-auto md:px-4 md:py-2 text-sm' : 'px-4 py-2 text-sm'
       } ${className}`}
     >

@@ -4,10 +4,13 @@ import { Menu, X } from 'lucide-react'
 import { mainNavLinks } from '@/config/navigation'
 import { DarkModeToggle } from '@/components/DarkModeToggle'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
+import { useRealtime } from '@/hooks/use-realtime'
 
 export function Header(): JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
   const [scrolled, setScrolled] = useState<boolean>(false)
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
 
   useEffect(() => {
     const handleScroll = (): void => {
@@ -17,11 +20,26 @@ export function Header(): JSX.Element {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    getSiteSettings().then((res) => {
+      if (res) setSettings(res)
+    })
+  }, [])
+
+  useRealtime('site_settings', () => {
+    getSiteSettings().then((res) => {
+      if (res) setSettings(res)
+    })
+  })
+
   const closeMobileMenu = (): void => setMobileMenuOpen(false)
+
+  const logoUrl =
+    settings && settings.logo ? getFileUrl('site_settings', settings.id, settings.logo) : null
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 bg-background/90 backdrop-blur-md border-b ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 bg-white/95 dark:bg-card/95 backdrop-blur-md border-b ${
         scrolled ? 'border-border shadow-sm py-2.5' : 'border-border/60 py-3.5'
       }`}
     >
@@ -31,17 +49,25 @@ export function Header(): JSX.Element {
           <Link
             to="/"
             onClick={closeMobileMenu}
-            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
           >
-            <div className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-extrabold text-xs tracking-wider shadow-sm group-hover:opacity-95 transition-opacity flex-shrink-0">
-              LOGO
-            </div>
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt="Tasty Aromas e Sabores"
+                className="h-10 w-auto max-w-[140px] object-contain flex-shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-display font-extrabold text-xs tracking-wider shadow-sm group-hover:opacity-95 transition-opacity flex-shrink-0">
+                TASTY
+              </div>
+            )}
             <div className="flex flex-col">
-              <span className="font-bold text-lg md:text-xl text-foreground leading-tight tracking-tight group-hover:text-primary transition-colors">
+              <span className="font-display font-bold text-lg md:text-xl text-primary leading-tight tracking-tight group-hover:text-accent transition-colors">
                 Tasty Plus
               </span>
               <span className="hidden sm:inline text-xs text-muted-foreground font-medium leading-none">
-                A fórmula certa para a sua empresa
+                {settings?.tagline || 'Tasty Aromas e Sabores'}
               </span>
             </div>
           </Link>
@@ -54,19 +80,32 @@ export function Header(): JSX.Element {
                 to={link.path}
                 end={link.path === '/'}
                 className={({ isActive }) =>
-                  `px-3 py-2 text-sm font-semibold rounded-md transition-all relative ${
+                  `group relative px-3.5 py-2 text-sm font-display font-semibold transition-colors duration-200 ${
                     isActive
-                      ? 'text-primary after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-primary after:rounded-full'
-                      : 'text-foreground/80 hover:text-foreground hover:bg-secondary/60'
+                      ? 'text-primary dark:text-foreground font-bold'
+                      : 'text-foreground/85 hover:text-primary dark:hover:text-foreground'
                   }`
                 }
               >
-                {link.label}
+                {({ isActive }) => (
+                  <>
+                    <span>{link.label}</span>
+                    {/* Hover and Active Red Animated Underline Indicator */}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute bottom-0 left-3.5 right-3.5 h-[2px] bg-accent rounded-full transition-all duration-300 ${
+                        isActive
+                          ? 'opacity-100 scale-x-100'
+                          : 'opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100'
+                      }`}
+                    />
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
 
-          {/* Right cluster: Dark Mode + WhatsApp + Hamburger */}
+          {/* Right cluster: Dark Mode + WhatsApp CTA + Hamburger */}
           <div className="flex items-center gap-2 md:gap-3">
             <DarkModeToggle />
             <WhatsAppButton />
@@ -77,7 +116,7 @@ export function Header(): JSX.Element {
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu de navegação'}
               aria-expanded={mobileMenuOpen}
-              className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-border bg-card/80 text-foreground hover:bg-secondary/80 transition-colors cursor-pointer"
+              className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-card/80 text-foreground hover:bg-secondary transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -87,7 +126,7 @@ export function Header(): JSX.Element {
 
       {/* Mobile Slide-down Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur-md animate-fade-in shadow-lg">
+        <div className="lg:hidden border-t border-border bg-background/98 backdrop-blur-md animate-fade-in shadow-xl">
           <div className="max-w-7xl mx-auto px-4 py-4 space-y-2">
             <nav aria-label="Navegação móvel" className="flex flex-col space-y-1">
               {mainNavLinks.map((link) => (
@@ -97,9 +136,9 @@ export function Header(): JSX.Element {
                   end={link.path === '/'}
                   onClick={closeMobileMenu}
                   className={({ isActive }) =>
-                    `px-4 py-3 text-base font-semibold rounded-lg transition-colors flex items-center justify-between ${
+                    `px-4 py-3 text-base font-display font-semibold rounded-xl transition-all flex items-center justify-between ${
                       isActive
-                        ? 'bg-secondary text-primary border-l-4 border-primary pl-3'
+                        ? 'bg-secondary text-primary dark:text-foreground border-l-4 border-accent pl-3'
                         : 'text-foreground/90 hover:bg-secondary/60'
                     }`
                   }

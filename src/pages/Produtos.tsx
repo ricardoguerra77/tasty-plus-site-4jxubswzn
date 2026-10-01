@@ -92,20 +92,9 @@ export default function Produtos(): JSX.Element {
     return text.length > 120 ? text.slice(0, 117) + '...' : text
   }
 
-  // Category badge color mapper
-  const getCategoryBadgeClass = (category: ProductCategory): string => {
-    switch (category) {
-      case 'Aroma':
-        return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
-      case 'Extrato':
-        return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-      case 'Corante':
-        return 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
-      case 'Aditivo':
-        return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
-      default:
-        return 'bg-muted text-muted-foreground border-border'
-    }
+  // Category badge color mapper - adhering to Tasty Aromas e Sabores palette
+  const getCategoryBadgeClass = (_category: ProductCategory): string => {
+    return 'bg-accent text-accent-foreground font-semibold border-transparent shadow-sm'
   }
 
   // Private label whatsapp quote
@@ -118,10 +107,10 @@ export default function Produtos(): JSX.Element {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12 animate-fade-in">
       {/* Header & Title */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge variant="outline" className="text-primary border-primary/30 font-semibold">
+        <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full">
           Catálogo Industrial
         </Badge>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-primary tracking-tight">
           Nossos Produtos
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -131,16 +120,16 @@ export default function Produtos(): JSX.Element {
       </div>
 
       {/* PRIVATE LABEL BANNER */}
-      <div className="rounded-2xl bg-gradient-to-r from-amber-950 via-slate-900 to-amber-900 text-white p-6 md:p-8 border border-amber-500/30 shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="rounded-2xl bg-[hsl(215,73%,14%)] text-white p-6 md:p-8 border border-primary/30 shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-accent text-xs font-display font-bold uppercase tracking-wider">
             <Sparkles className="w-4 h-4" />
             <span>Oportunidade Exclusiva para Franquias & Distribuidores</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold leading-snug">
+          <h2 className="text-xl sm:text-2xl font-display font-bold leading-snug">
             Marca própria de Whisky e Refrigerante de Cola para ser franqueada — Consulte-nos!
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300">
+          <p className="text-xs sm:text-sm text-slate-200">
             Fornecemos formulações completas, bases industriais padronizadas e todo o suporte
             técnico para o lançamento da sua linha exclusiva.
           </p>
@@ -148,7 +137,7 @@ export default function Produtos(): JSX.Element {
         <Button
           asChild
           size="lg"
-          className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold whitespace-nowrap shadow-md flex-shrink-0"
+          className="bg-accent hover:bg-accent-dark text-accent-foreground font-display font-bold whitespace-nowrap shadow-md flex-shrink-0"
         >
           <a href={privateLabelWhatsAppUrl} target="_blank" rel="noopener noreferrer">
             Consultar Franquia
@@ -167,9 +156,9 @@ export default function Produtos(): JSX.Element {
                 key={tab.value}
                 type="button"
                 onClick={() => setActiveCategory(tab.value)}
-                className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 md:flex-initial text-center ${
+                className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-display font-semibold transition-all cursor-pointer flex-1 md:flex-initial text-center ${
                   activeCategory === tab.value
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-accent text-accent-foreground shadow-sm'
                     : 'text-foreground/80 hover:text-foreground hover:bg-background/60'
                 }`}
               >
@@ -186,7 +175,7 @@ export default function Produtos(): JSX.Element {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar por nome ou sabor..."
-              className="pl-9 text-sm rounded-xl"
+              className="pl-9 text-sm rounded-xl border-border focus-visible:ring-accent"
             />
           </div>
         </div>
@@ -270,8 +259,7 @@ export default function Produtos(): JSX.Element {
                     />
                     <div className="absolute top-3 left-3">
                       <Badge
-                        variant="outline"
-                        className={`font-semibold backdrop-blur-md ${getCategoryBadgeClass(
+                        className={`font-semibold rounded-full text-xs px-3 py-1 ${getCategoryBadgeClass(
                           product.category,
                         )}`}
                       >
@@ -284,7 +272,7 @@ export default function Produtos(): JSX.Element {
                   {/* Body content */}
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <h3 className="font-bold text-lg text-foreground leading-snug group-hover:text-primary transition-colors">
+                      <h3 className="font-display font-bold text-lg text-foreground leading-snug group-hover:text-accent transition-colors">
                         {product.name}
                       </h3>
                       <p className="text-xs text-muted-foreground leading-relaxed">
@@ -298,7 +286,7 @@ export default function Produtos(): JSX.Element {
                         href={whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full inline-flex items-center justify-center gap-2 font-semibold text-white bg-[#25D366] hover:bg-[#20ba59] active:scale-95 transition-all py-2.5 px-4 rounded-xl text-xs sm:text-sm shadow-sm"
+                        className="w-full inline-flex items-center justify-center gap-2 font-display font-bold text-accent-foreground bg-accent hover:bg-accent-dark active:scale-95 transition-all py-2.5 px-4 rounded-xl text-xs sm:text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <MessageCircle className="w-4 h-4 flex-shrink-0" />
                         <span>Solicitar Cotação</span>

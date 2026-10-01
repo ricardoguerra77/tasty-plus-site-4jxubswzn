@@ -72,9 +72,9 @@ export default function Representantes(): JSX.Element {
 
   const getRoleBadgeVariant = (role: RepresentativeRole) => {
     if (role === 'Representante Distribuidor') {
-      return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+      return 'bg-accent text-accent-foreground border-transparent'
     }
-    return 'bg-primary/10 text-primary border-primary/30'
+    return 'bg-primary/10 text-primary border-primary/20'
   }
 
   // Format tel: link
@@ -94,10 +94,10 @@ export default function Representantes(): JSX.Element {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12 animate-fade-in">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge variant="outline" className="text-primary border-primary/30 font-semibold">
+        <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full">
           Atendimento Nacional
         </Badge>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-primary tracking-tight">
           Nossos Representantes
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -236,7 +236,7 @@ export default function Representantes(): JSX.Element {
                             <Button
                               asChild
                               size="sm"
-                              className="bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold text-xs shadow-sm"
+                              className="bg-accent hover:bg-accent-dark text-accent-foreground font-display font-bold text-xs shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             >
                               <a href={repWhatsAppUrl} target="_blank" rel="noopener noreferrer">
                                 <MessageCircle className="w-3.5 h-3.5 mr-1" />
@@ -258,16 +258,16 @@ export default function Representantes(): JSX.Element {
       )}
 
       {/* CALLOUT: INVITATION TO NEW REPRESENTATIVES */}
-      <section className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-card p-8 md:p-12 shadow-sm">
+      <section className="rounded-3xl border border-primary/20 bg-[hsl(215,73%,14%)] text-white p-8 md:p-12 shadow-sm">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           <div className="space-y-3">
-            <Badge variant="outline" className="text-primary border-primary/30 font-semibold">
+            <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full">
               Expansão Comercial
             </Badge>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground">
+            <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white">
               Seja um Representante Tasty Plus na sua região
             </h2>
-            <p className="text-sm text-muted-foreground max-w-xl leading-relaxed">
+            <p className="text-sm text-slate-200 max-w-xl leading-relaxed">
               Você já atua no fornecimento para indústrias de bebidas, laticínios, panificação ou
               confeitaria? Junte-se a uma marca sólida com mais de 30 anos de mercado, portfólio
               completo e suporte técnico especializado.
@@ -276,7 +276,7 @@ export default function Representantes(): JSX.Element {
           <Button
             asChild
             size="lg"
-            className="font-bold whitespace-nowrap shadow-md text-sm md:text-base flex-shrink-0"
+            className="bg-accent hover:bg-accent-dark text-accent-foreground font-display font-bold whitespace-nowrap shadow-md text-sm md:text-base flex-shrink-0"
           >
             <a href={repApplicationWhatsApp} target="_blank" rel="noopener noreferrer">
               Cadastre-se como Representante
