@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react'
 import { mainNavLinks } from '@/config/navigation'
 import { DarkModeToggle } from '@/components/DarkModeToggle'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { BrandLogo } from '@/components/BrandLogo'
 import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
 import { useRealtime } from '@/hooks/use-realtime'
 
@@ -58,8 +59,12 @@ export function Header(): JSX.Element {
                 className="h-10 w-auto max-w-[140px] object-contain flex-shrink-0"
               />
             ) : (
-              <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-display font-extrabold text-xs tracking-wider shadow-sm group-hover:opacity-95 transition-opacity flex-shrink-0">
-                TASTY
+              <div className="flex items-center flex-shrink-0">
+                <BrandLogo
+                  className="h-10 w-auto max-w-[140px] object-contain drop-shadow-sm group-hover:opacity-95 transition-opacity"
+                  alt="Tasty Aromas e Sabores"
+                />
+                <span className="sr-only">TASTY</span>
               </div>
             )}
             <div className="flex flex-col">

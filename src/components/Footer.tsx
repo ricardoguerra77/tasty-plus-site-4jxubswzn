@@ -1,6 +1,7 @@
 import type { JSX } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Linkedin } from 'lucide-react'
+import { BrandLogo } from '@/components/BrandLogo'
 
 export function Footer(): JSX.Element {
   const currentYear = new Date().getFullYear()
@@ -11,9 +12,13 @@ export function Footer(): JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6">
           {/* Col 1: Brand block */}
           <div className="space-y-3 lg:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-accent text-accent-foreground flex items-center justify-center font-display font-extrabold text-xs tracking-wider shadow-sm">
-                TASTY
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center">
+                <BrandLogo
+                  className="h-9 w-auto max-w-[120px] object-contain drop-shadow"
+                  alt="Tasty Aromas e Sabores"
+                />
+                <span className="sr-only">TASTY</span>
               </div>
               <span className="font-display font-bold text-lg text-white tracking-tight">
                 Tasty Plus
