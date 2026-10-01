@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import Layout from '@/components/Layout'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import ProtectedRoute from '@/components/ProtectedRoute'
 import NotFound from '@/pages/NotFound'
 import { routesConfig } from '@/config/navigation'
 
@@ -21,17 +22,30 @@ export function App(): JSX.Element {
             <Route element={<Layout />}>
               {routesConfig.map((route) => {
                 const LazyComponent = route.lazyComponent
-                return (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <LazyComponent />
-                      </Suspense>
-                    }
-                  />
+                const content = (
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <LazyComponent />
+                  </Suspense>
                 )
+
+                if (route.requiredRole || route.allowedRoles) {
+                  return (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={
+                        <ProtectedRoute
+                          requiredRole={route.requiredRole}
+                          allowedRoles={route.allowedRoles}
+                        >
+                          {content}
+                        </ProtectedRoute>
+                      }
+                    />
+                  )
+                }
+
+                return <Route key={route.path} path={route.path} element={content} />
               })}
             </Route>
             <Route path="*" element={<NotFound />} />

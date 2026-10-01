@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T22:20:45.406Z",
+  "generatedAt": "2026-10-01T22:28:47.715Z",
   "collections": [
     {
       "name": "users",
@@ -15,7 +15,7 @@
         {
           "name": "name",
           "type": "text",
-          "required": false,
+          "required": true,
           "system": false
         },
         {
@@ -37,12 +37,434 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["admin", "editor"]
         }
       ],
       "indexes": [
         "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
         "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''"
       ]
+    },
+    {
+      "name": "site_settings",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.id != '' && @request.auth.role = 'admin'",
+        "update": "@request.auth.id != '' && @request.auth.role = 'admin'",
+        "delete": "@request.auth.id != '' && @request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "logo",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tagline",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroSlide1Title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroSlide1Subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroImage1",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroSlide2Title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroSlide2Subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroImage2",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroSlide3Title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroSlide3Subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroImage3",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "companyIntro",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mission",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "vision",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "values",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "history",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "isoBadge",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "address",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "phoneFixed",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "phoneSales",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "phoneFinance",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "hoursWeek",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "hoursFriday",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mapEmbed",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "facebook",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "instagram",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "whatsapp",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "products",
+      "type": "base",
+      "apiRules": {
+        "list": "published = true || (@request.auth.id != '' && @request.auth.role = 'admin')",
+        "view": "published = true || (@request.auth.id != '' && @request.auth.role = 'admin')",
+        "create": "@request.auth.id != '' && @request.auth.role = 'admin'",
+        "update": "@request.auth.id != '' && @request.auth.role = 'admin'",
+        "delete": "@request.auth.id != '' && @request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "category",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Aroma", "Extrato", "Aditivo", "Corante", "Outro"]
+        },
+        {
+          "name": "description",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "published",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_products_order ON products (order)",
+        "CREATE INDEX idx_products_published ON products (published)"
+      ]
+    },
+    {
+      "name": "news",
+      "type": "base",
+      "apiRules": {
+        "list": "published = true || (@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor'))",
+        "view": "published = true || (@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor'))",
+        "create": "@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor')",
+        "update": "@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor')",
+        "delete": "@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor')"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "excerpt",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "body",
+          "type": "editor",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "author",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "publishedAt",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "published",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "createdBy",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_news_slug ON news (slug)",
+        "CREATE INDEX idx_news_published ON news (published)"
+      ]
+    },
+    {
+      "name": "representatives",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.id != '' && @request.auth.role = 'admin'",
+        "update": "@request.auth.id != '' && @request.auth.role = 'admin'",
+        "delete": "@request.auth.id != '' && @request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "region",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Representante", "Representante Distribuidor"]
+        },
+        {
+          "name": "phone",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "whatsapp",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_representatives_order ON representatives (order)"]
     }
   ]
 }

@@ -8,6 +8,8 @@ export interface RouteConfig {
   lazyComponent: ComponentType
   isNav?: boolean
   navLabel?: string
+  requiredRole?: 'admin' | 'editor'
+  allowedRoles?: ('admin' | 'editor')[]
 }
 
 export interface NavLinkItem {
@@ -65,11 +67,13 @@ export const routesConfig: RouteConfig[] = [
     path: '/admin',
     title: 'Admin',
     lazyComponent: lazy(() => import('@/pages/Admin')),
+    requiredRole: 'admin',
   },
   {
     path: '/admin/noticias',
     title: 'Admin — Notícias',
     lazyComponent: lazy(() => import('@/pages/AdminNoticias')),
+    allowedRoles: ['admin', 'editor'],
   },
 ]
 
