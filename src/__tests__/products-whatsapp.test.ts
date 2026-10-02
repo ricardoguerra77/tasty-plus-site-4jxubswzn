@@ -1,6 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { formatPhoneMask, buildWhatsAppLink } from '@/lib/whatsapp'
-import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from '@/services/products'
+import {
+  PRODUCT_CATEGORIES,
+  DEFAULT_CATEGORY_COLORS,
+  isValidHexColor,
+  normalizeHexColor,
+  getCategoryColor,
+  getCategoryBadgeStyle,
+  type Product,
+  type ProductCategory,
+} from '@/services/products'
 
 describe('Unit Tests: WhatsApp Link Builder & Phone Mask', () => {
   it('correctly builds WhatsApp link with phone and encoded product text', () => {
@@ -186,5 +195,69 @@ describe('Unit Tests: Product Filtering, Sorting and Category Derivation Logic',
 
     const emptyTabs = deriveCategories([])
     expect(emptyTabs).toEqual([{ label: 'Todos', value: 'Todos' }])
+  })
+})
+
+describe('Unit Tests: Category Colors & Badge Styles', () => {
+  it('has consistent default colors defined for all product categories', () => {
+    PRODUCT_CATEGORIES.forEach((cat) => {
+      const color = DEFAULT_CATEGORY_COLORS[cat]
+      expect(color).toBeDefined()
+      expect(isValidHexColor(color)).toBe(true)
+    })
+
+    // Specifically: Aroma = red accent, Extrato = navy, Corante = amber/orange, Aditivo = purple, Outro = gray
+    expect(DEFAULT_CATEGORY_COLORS.Aroma).toBe('#e11d48')
+    expect(DEFAULT_CATEGORY_COLORS.Extrato).toBe('#16233b')
+    expect(DEFAULT_CATEGORY_COLORS.Corante).toBe('#d97706')
+    expect(DEFAULT_CATEGORY_COLORS.Aditivo).toBe('#5b21b6')
+    expect(DEFAULT_CATEGORY_COLORS.Outro).toBe('#475569')
+  })
+
+  it('validates hex colors properly', () => {
+    expect(isValidHexColor('#e11d48')).toBe(true)
+    expect(isValidHexColor('#FFF')).toBe(true)
+    expect(isValidHexColor('#16233b')).toBe(true)
+    expect(isValidHexColor('16233b')).toBe(false)
+    expect(isValidHexColor('#12345')).toBe(false)
+    expect(isValidHexColor('blue')).toBe(false)
+  })
+
+  it('normalizes 3-char and 6-char hex colors to lowercase 6-char hex', () => {
+    expect(normalizeHexColor('#FFF')).toBe('#ffffff')
+    expect(normalizeHexColor('#E11D48')).toBe('#e11d48')
+    expect(normalizeHexColor('invalid', '#475569')).toBe('#475569')
+  })
+
+  it('returns default color when no custom color is defined', () => {
+    expect(getCategoryColor('Aroma')).toBe(DEFAULT_CATEGORY_COLORS.Aroma)
+    expect(getCategoryColor('Extrato')).toBe(DEFAULT_CATEGORY_COLORS.Extrato)
+    expect(getCategoryColor('Corante')).toBe(DEFAULT_CATEGORY_COLORS.Corante)
+  })
+
+  it('custom configured color in site_settings overrides the default', () => {
+    const customColors = {
+      Aroma: '#ff0055',
+      Extrato: '#003366',
+    }
+    expect(getCategoryColor('Aroma', customColors)).toBe('#ff0055')
+    expect(getCategoryColor('Extrato', customColors)).toBe('#003366')
+    // Non-overridden fallback to default
+    expect(getCategoryColor('Corante', customColors)).toBe(DEFAULT_CATEGORY_COLORS.Corante)
+  })
+
+  it('generates badge style with background, border and text color for legible contrast', () => {
+    const badgeAroma = getCategoryBadgeStyle('Aroma')
+    expect(badgeAroma.baseColor).toBe(DEFAULT_CATEGORY_COLORS.Aroma)
+    expect(badgeAroma.style.color).toBe(DEFAULT_CATEGORY_COLORS.Aroma)
+    expect(badgeAroma.style.backgroundColor).toContain('rgba(225, 29, 72, 0.12)')
+    expect(badgeAroma.style.borderColor).toContain('rgba(225, 29, 72, 0.25)')
+
+    const customOverrides = {
+      Extrato: '#112233',
+    }
+    const badgeExtrato = getCategoryBadgeStyle('Extrato', customOverrides)
+    expect(badgeExtrato.baseColor).toBe('#112233')
+    expect(badgeExtrato.style.color).toBe('#112233')
   })
 })

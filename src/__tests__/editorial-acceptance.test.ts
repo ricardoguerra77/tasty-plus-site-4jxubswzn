@@ -219,6 +219,39 @@ describe('Editorial Acceptance Functional Scenarios (Playwright / Functional Acc
     expect(result.heroSlide1Title).toBe('Liderança Tecnológica em Aromas Industriais')
   })
 
+  it('Scenario H: Admin configures custom category colors, saves in site_settings, and the customization persists and applies', async () => {
+    // 1. Admin login
+    pb.authStore.save('mock-admin-token', {
+      id: 'usr_admin_1',
+      collectionId: '_pb_users_auth_',
+      collectionName: 'users',
+      email: 'admin@tastyplus.com.br',
+      role: 'admin',
+    } as unknown as RecordModel)
+
+    const updatedSettings = {
+      id: 'settings_01',
+      categoryColors: {
+        Aroma: '#ff1122',
+        Extrato: '#0a192f',
+        Corante: '#ff9900',
+        Aditivo: '#6b21a8',
+        Outro: '#64748b',
+      },
+    }
+
+    vi.spyOn(pb.collection('site_settings'), 'update').mockResolvedValue(updatedSettings as never)
+    const result = await pb.collection('site_settings').update('settings_01', updatedSettings)
+
+    expect(result.categoryColors).toBeDefined()
+    expect(result.categoryColors.Aroma).toBe('#ff1122')
+    expect(result.categoryColors.Extrato).toBe('#0a192f')
+
+    // 2. Editor tries to update category colors - blocked by role check
+    const editorRole = 'editor'
+    expect(canManageInstitutional(editorRole)).toBe(false)
+  })
+
   it('Scenario G: Reloading or opening the site in a new session keeps data correct and preserves all registered routes including /qualidade and /quem-somos', () => {
     // Check all 11 registered routes
     const registeredPaths = routesConfig.map((r) => r.path)

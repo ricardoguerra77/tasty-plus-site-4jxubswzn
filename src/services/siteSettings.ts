@@ -15,6 +15,7 @@ export interface SiteSettings {
   heroSlide3Subtitle?: string
   heroImage3?: string
   heroOverlayOpacity?: number
+  categoryColors?: Record<string, string>
   companyIntro?: string
   mission?: string
   vision?: string
@@ -52,6 +53,7 @@ export interface SiteSettingsUpdateInput {
   heroSlide3Subtitle?: string
   heroImage3?: File | string | null
   heroOverlayOpacity?: number
+  categoryColors?: Record<string, string> | null
   companyIntro?: string
   mission?: string
   vision?: string
@@ -140,6 +142,9 @@ export async function saveSiteSettings(data: SiteSettingsUpdateInput): Promise<S
       formData.append(key, String(val))
     } else if (typeof val === 'number') {
       formData.append(key, String(val))
+    } else if (typeof val === 'object') {
+      // JSON objects like categoryColors
+      formData.append(key, JSON.stringify(val))
     } else if (typeof val === 'string') {
       formData.append(key, val)
     }

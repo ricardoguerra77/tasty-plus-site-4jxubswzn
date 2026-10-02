@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T12:50:56.349Z",
+  "generatedAt": "2026-10-02T13:01:15.632Z",
   "collections": [
     {
       "name": "users",
@@ -265,6 +265,12 @@
         {
           "name": "flowChartImage",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "categoryColors",
+          "type": "json",
           "required": false,
           "system": false
         }

@@ -1,14 +1,16 @@
 import pb from '@/lib/pocketbase/client'
+import type { ProductCategory } from '@/lib/category-colors'
 
-export type ProductCategory = 'Aroma' | 'Extrato' | 'Aditivo' | 'Corante' | 'Outro'
-
-export const PRODUCT_CATEGORIES: ProductCategory[] = [
-  'Aroma',
-  'Extrato',
-  'Aditivo',
-  'Corante',
-  'Outro',
-]
+export {
+  PRODUCT_CATEGORIES,
+  DEFAULT_CATEGORY_COLORS,
+  isValidHexColor,
+  hexToRgb,
+  normalizeHexColor,
+  getCategoryColor,
+  getCategoryBadgeStyle,
+  type ProductCategory,
+} from '@/lib/category-colors'
 
 export interface Product {
   id: string

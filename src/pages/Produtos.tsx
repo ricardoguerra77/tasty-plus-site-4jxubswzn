@@ -17,9 +17,12 @@ import { useRealtime } from '@/hooks/use-realtime'
 import {
   listProducts,
   PRODUCT_CATEGORIES,
+  getCategoryBadgeStyle,
+  getCategoryColor,
   type Product,
   type ProductCategory,
 } from '@/services/products'
+import { getSiteSettings } from '@/services/siteSettings'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
 import { StateFeedback } from '@/components/StateFeedback'
 
@@ -39,6 +42,18 @@ export default function Produtos(): JSX.Element {
   const [error, setError] = useState<boolean>(false)
   const [activeCategory, setActiveCategory] = useState<'Todos' | ProductCategory>('Todos')
   const [searchQuery, setSearchQuery] = useState<string>('')
+  const [categoryColors, setCategoryColors] = useState<Record<string, string> | null>(null)
+
+  const fetchSettings = useCallback(async () => {
+    try {
+      const settings = await getSiteSettings()
+      if (settings?.categoryColors && typeof settings.categoryColors === 'object') {
+        setCategoryColors(settings.categoryColors)
+      }
+    } catch {
+      // Usará cores padrão se falhar
+    }
+  }, [])
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -60,11 +75,15 @@ export default function Produtos(): JSX.Element {
 
   useEffect(() => {
     fetchProducts()
-  }, [fetchProducts])
+    fetchSettings()
+  }, [fetchProducts, fetchSettings])
 
-  // Realtime subscription on products collection
+  // Realtime subscription on products & site_settings collection
   useRealtime('products', () => {
     fetchProducts()
+  })
+  useRealtime('site_settings', () => {
+    fetchSettings()
   })
 
   // Derive categories that have at least one visible published product
@@ -246,6 +265,9 @@ export default function Produtos(): JSX.Element {
           >
             {availableCategories.map((tab) => {
               const isActive = activeCategory === tab.value
+              const tabColor =
+                tab.value !== 'Todos' ? getCategoryColor(tab.value, categoryColors) : undefined
+
               return (
                 <button
                   key={tab.value}
@@ -253,12 +275,31 @@ export default function Produtos(): JSX.Element {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setActiveCategory(tab.value)}
-                  className={`min-h-[44px] px-4 py-2 rounded-lg text-xs sm:text-sm font-display font-semibold transition-all cursor-pointer flex-1 md:flex-initial text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                  style={
+                    isActive && tabColor
+                      ? {
+                          backgroundColor: tabColor,
+                          color: '#ffffff',
+                          borderColor: tabColor,
+                        }
+                      : undefined
+                  }
+                  className={`min-h-[44px] px-4 py-2 rounded-lg text-xs sm:text-sm font-display font-semibold transition-all cursor-pointer flex-1 md:flex-initial text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent inline-flex items-center justify-center gap-2 ${
                     isActive
-                      ? 'bg-accent text-accent-foreground shadow-sm'
+                      ? tabColor
+                        ? 'shadow-sm'
+                        : 'bg-accent text-accent-foreground shadow-sm'
                       : 'text-foreground/80 hover:text-foreground hover:bg-background/80'
                   }`}
                 >
+                  {tabColor && (
+                    <span
+                      className="w-2 h-2 rounded-full inline-block flex-shrink-0"
+                      style={{
+                        backgroundColor: isActive ? '#ffffff' : tabColor,
+                      }}
+                    />
+                  )}
                   <span>{tab.label}</span>
                 </button>
               )
@@ -353,10 +394,22 @@ export default function Produtos(): JSX.Element {
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
-                      <Badge className="bg-accent/15 text-accent hover:bg-accent/20 border-transparent font-semibold rounded-full text-xs px-2.5 py-0.5 inline-flex items-center gap-1 shadow-none">
-                        <Tag className="w-3 h-3 flex-shrink-0" />
-                        <span>{product.category}</span>
-                      </Badge>
+                      {(() => {
+                        const badgeStyle = getCategoryBadgeStyle(product.category, categoryColors)
+                        return (
+                          <Badge
+                            data-testid={`product-category-badge-${product.category.toLowerCase()}`}
+                            style={badgeStyle.style}
+                            className="font-semibold rounded-full text-xs px-2.5 py-0.5 inline-flex items-center gap-1 shadow-none border"
+                          >
+                            <Tag
+                              className="w-3 h-3 flex-shrink-0"
+                              style={{ color: badgeStyle.baseColor }}
+                            />
+                            <span style={{ color: badgeStyle.baseColor }}>{product.category}</span>
+                          </Badge>
+                        )
+                      })()}
                     </div>
 
                     <h3 className="font-display font-bold text-lg text-primary leading-snug group-hover:text-accent transition-colors">

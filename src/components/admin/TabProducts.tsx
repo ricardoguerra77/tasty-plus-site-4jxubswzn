@@ -5,11 +5,16 @@ import {
   updateProduct,
   deleteProduct,
   PRODUCT_CATEGORIES,
+  DEFAULT_CATEGORY_COLORS,
+  isValidHexColor,
+  normalizeHexColor,
+  getCategoryBadgeStyle,
   type Product,
   type ProductCategory,
 } from '@/services/products'
-import { getFileUrl } from '@/services/siteSettings'
+import { getFileUrl, getSiteSettings, saveSiteSettings } from '@/services/siteSettings'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
+import { useAuth } from '@/hooks/useAuth'
 import { ImageUploader } from '@/components/admin/ImageUploader'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { Button } from '@/components/ui/button'
@@ -67,6 +72,13 @@ export function TabProducts(): JSX.Element {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false)
   const [productToDelete, setProductToDelete] = useState<Product | null>(null)
 
+  // Category colors configuration state (site_settings)
+  const { isAdmin } = useAuth()
+  const [categoryColors, setCategoryColors] = useState<Record<ProductCategory, string>>({
+    ...DEFAULT_CATEGORY_COLORS,
+  })
+  const [savingColors, setSavingColors] = useState<boolean>(false)
+
   const loadData = async (): Promise<void> => {
     try {
       setLoading(true)
@@ -85,7 +97,63 @@ export function TabProducts(): JSX.Element {
 
   useEffect(() => {
     loadData()
+    // Load category colors from site_settings
+    getSiteSettings().then((settings) => {
+      if (settings?.categoryColors && typeof settings.categoryColors === 'object') {
+        const loaded: Partial<Record<ProductCategory, string>> = {}
+        PRODUCT_CATEGORIES.forEach((cat) => {
+          const val = settings.categoryColors?.[cat]
+          if (val && isValidHexColor(val)) {
+            loaded[cat] = normalizeHexColor(val)
+          } else {
+            loaded[cat] = DEFAULT_CATEGORY_COLORS[cat]
+          }
+        })
+        setCategoryColors(loaded as Record<ProductCategory, string>)
+      }
+    })
   }, [])
+
+  const handleColorChange = (cat: ProductCategory, newColor: string) => {
+    setCategoryColors((prev) => ({
+      ...prev,
+      [cat]: newColor,
+    }))
+  }
+
+  const handleResetColors = () => {
+    setCategoryColors({ ...DEFAULT_CATEGORY_COLORS })
+  }
+
+  const handleSaveColors = async () => {
+    if (!isAdmin) {
+      toast({
+        title: 'Permissão negada',
+        description: 'Apenas administradores podem alterar as cores das categorias.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setSavingColors(true)
+    try {
+      await saveSiteSettings({
+        categoryColors,
+      })
+      toast({
+        title: 'Cores atualizadas',
+        description: 'As cores das etiquetas de categorias foram salvas com sucesso.',
+      })
+    } catch (err) {
+      toast({
+        title: 'Erro ao salvar cores',
+        description: getErrorMessage(err),
+        variant: 'destructive',
+      })
+    } finally {
+      setSavingColors(false)
+    }
+  }
 
   const handleOpenCreate = (): void => {
     setEditingProduct(null)
@@ -256,7 +324,22 @@ export function TabProducts(): JSX.Element {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge variant="outline">{prod.category}</Badge>
+                      {(() => {
+                        const badgeStyle = getCategoryBadgeStyle(prod.category, categoryColors)
+                        return (
+                          <Badge
+                            variant="outline"
+                            style={badgeStyle.style}
+                            className="font-medium text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1 border"
+                          >
+                            <span
+                              className="w-2 h-2 rounded-full inline-block flex-shrink-0"
+                              style={{ backgroundColor: badgeStyle.baseColor }}
+                            />
+                            <span>{prod.category}</span>
+                          </Badge>
+                        )
+                      })()}
                     </td>
                     <td className="px-4 py-3 text-center font-mono text-xs">{prod.order ?? 0}</td>
                     <td className="px-4 py-3 text-center">
@@ -296,6 +379,114 @@ export function TabProducts(): JSX.Element {
           </div>
         </div>
       )}
+
+      {/* SEÇÃO: CONFIGURAÇÃO DE CORES DAS ETIQUETAS POR CATEGORIA */}
+      <div
+        data-testid="category-colors-card"
+        className="rounded-xl border bg-card p-5 sm:p-6 shadow-sm space-y-4"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b pb-4">
+          <div>
+            <h3 className="text-base font-bold text-foreground">
+              Cores das Etiquetas por Categoria
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Personalize a cor da etiqueta (badge) exibida nos cards de produto da página pública
+              /produtos.
+            </p>
+          </div>
+          {isAdmin && (
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleResetColors}
+                disabled={savingColors}
+                className="text-xs"
+              >
+                Restaurar Padrão
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSaveColors}
+                disabled={savingColors}
+                id="btn-save-category-colors"
+                className="text-xs flex items-center gap-1.5"
+              >
+                {savingColors ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <span>Salvando...</span>
+                  </>
+                ) : (
+                  <span>Salvar Cores</span>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {!isAdmin && (
+          <p className="text-xs text-muted-foreground bg-muted/40 p-3 rounded-md">
+            Nota: Somente usuários administradores têm permissão para editar as cores das
+            categorias.
+          </p>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+          {PRODUCT_CATEGORIES.map((cat) => {
+            const currentColor = categoryColors[cat] || DEFAULT_CATEGORY_COLORS[cat]
+            const badgeStyle = getCategoryBadgeStyle(cat, categoryColors)
+            return (
+              <div
+                key={cat}
+                data-testid={`category-color-item-${cat.toLowerCase()}`}
+                className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-muted/20"
+              >
+                <div className="space-y-1.5 min-w-0">
+                  <span className="text-xs font-semibold text-foreground block">{cat}</span>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      style={badgeStyle.style}
+                      className="font-medium text-xs px-2.5 py-0.5 rounded-full border shadow-none"
+                    >
+                      {cat}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <input
+                    type="color"
+                    id={`color-picker-${cat}`}
+                    aria-label={`Cor para categoria ${cat}`}
+                    value={
+                      isValidHexColor(currentColor)
+                        ? normalizeHexColor(currentColor)
+                        : DEFAULT_CATEGORY_COLORS[cat]
+                    }
+                    onChange={(e) => handleColorChange(cat, e.target.value)}
+                    disabled={!isAdmin || savingColors}
+                    className="w-9 h-9 rounded-md border border-input cursor-pointer disabled:cursor-not-allowed bg-transparent p-0.5"
+                  />
+                  <Input
+                    type="text"
+                    value={currentColor}
+                    onChange={(e) => handleColorChange(cat, e.target.value)}
+                    disabled={!isAdmin || savingColors}
+                    aria-label={`Código hexadecimal para ${cat}`}
+                    className="w-24 h-9 font-mono text-xs uppercase"
+                    maxLength={7}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       {/* Modal de Criação / Edição */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
