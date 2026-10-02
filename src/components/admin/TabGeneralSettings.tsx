@@ -40,6 +40,8 @@ export function TabGeneralSettings(): JSX.Element {
   const [heroImage1File, setHeroImage1File] = useState<File | null | undefined>(undefined)
   const [heroImage2File, setHeroImage2File] = useState<File | null | undefined>(undefined)
   const [heroImage3File, setHeroImage3File] = useState<File | null | undefined>(undefined)
+  const [orgChartImageFile, setOrgChartImageFile] = useState<File | null | undefined>(undefined)
+  const [flowChartImageFile, setFlowChartImageFile] = useState<File | null | undefined>(undefined)
 
   // Rich texts
   const [companyIntro, setCompanyIntro] = useState<string>('')
@@ -154,6 +156,8 @@ export function TabGeneralSettings(): JSX.Element {
       if (heroImage1File !== undefined) payload.heroImage1 = heroImage1File
       if (heroImage2File !== undefined) payload.heroImage2 = heroImage2File
       if (heroImage3File !== undefined) payload.heroImage3 = heroImage3File
+      if (orgChartImageFile !== undefined) payload.orgChartImage = orgChartImageFile
+      if (flowChartImageFile !== undefined) payload.flowChartImage = flowChartImageFile
 
       const updated = await saveSiteSettings(payload)
       setSettings(updated)
@@ -162,6 +166,8 @@ export function TabGeneralSettings(): JSX.Element {
       setHeroImage1File(undefined)
       setHeroImage2File(undefined)
       setHeroImage3File(undefined)
+      setOrgChartImageFile(undefined)
+      setFlowChartImageFile(undefined)
 
       toast({
         title: 'Sucesso',
@@ -498,7 +504,48 @@ export function TabGeneralSettings(): JSX.Element {
         </CardContent>
       </Card>
 
-      {/* 4. Certificação ISO & Informações de Contato */}
+      {/* 4. Certificação ISO, Diagramas & Informações de Contato */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">
+            Diagramas da Qualidade (Organograma e Fluxograma)
+          </CardTitle>
+          <CardDescription>
+            Envie imagens personalizadas para o Organograma e o Fluxograma da página de Qualidade.
+            Caso nenhuma imagem seja enviada, os diagramas padrão do sistema continuarão sendo
+            exibidos.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <ImageUploader
+              label="Organograma da Empresa"
+              helperText="Substitui o diagrama do organograma na página /qualidade (PNG, JPG, WebP ou SVG até 5MB)"
+              currentImageUrl={
+                settings?.id && settings.orgChartImage
+                  ? getFileUrl('site_settings', settings.id, settings.orgChartImage)
+                  : undefined
+              }
+              onFileSelect={(file) => setOrgChartImageFile(file)}
+              disabled={saving}
+            />
+
+            <ImageUploader
+              label="Fluxograma do SGQ"
+              helperText="Substitui o diagrama do fluxograma na página /qualidade (PNG, JPG, WebP ou SVG até 5MB)"
+              currentImageUrl={
+                settings?.id && settings.flowChartImage
+                  ? getFileUrl('site_settings', settings.id, settings.flowChartImage)
+                  : undefined
+              }
+              onFileSelect={(file) => setFlowChartImageFile(file)}
+              disabled={saving}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 5. Certificação ISO & Informações de Contato */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Certificação e Contatos</CardTitle>

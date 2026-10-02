@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react'
 import { mainNavLinks } from '@/config/navigation'
 import { DarkModeToggle } from '@/components/DarkModeToggle'
 import { BrandLogo } from '@/components/BrandLogo'
-import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
+import { getSiteSettings, resolveSiteLogoUrl, type SiteSettings } from '@/services/siteSettings'
 import { useRealtime } from '@/hooks/use-realtime'
 
 export function Header(): JSX.Element {
@@ -53,10 +53,7 @@ export function Header(): JSX.Element {
 
   const closeMobileMenu = (): void => setMobileMenuOpen(false)
 
-  // Use logoDark in dark mode (if present), else standard logo (if present)
-  const chosenLogo = isDark && settings?.logoDark ? settings.logoDark : settings?.logo
-  const logoUrl =
-    settings && chosenLogo ? getFileUrl('site_settings', settings.id, chosenLogo) : null
+  const logoUrl = resolveSiteLogoUrl(settings, isDark)
 
   return (
     <header

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T11:14:34.730Z",
+  "generatedAt": "2026-10-02T11:28:32.439Z",
   "collections": [
     {
       "name": "users",
@@ -253,6 +253,18 @@
         {
           "name": "heroOverlayOpacity",
           "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "orgChartImage",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "flowChartImage",
+          "type": "file",
           "required": false,
           "system": false
         }

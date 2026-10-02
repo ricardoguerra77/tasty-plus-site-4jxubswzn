@@ -1,14 +1,10 @@
-import type { JSX } from 'react'
+import { useState, useEffect, type JSX } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Sparkles,
-  Building2,
-  Calendar,
-  CheckCircle2,
   FlaskConical,
   Award,
   ArrowRight,
-  ShieldCheck,
   Target,
   Layers,
   MapPin,
@@ -19,8 +15,44 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BrandLogo } from '@/components/BrandLogo'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
+import { getSiteSettings, resolveSiteLogoUrl, type SiteSettings } from '@/services/siteSettings'
+import { useRealtime } from '@/hooks/use-realtime'
 
 export default function QuemSomos(): JSX.Element {
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const [isDark, setIsDark] = useState<boolean>(false)
+
+  useEffect(() => {
+    getSiteSettings().then((res) => {
+      if (res) setSettings(res)
+    })
+  }, [])
+
+  useRealtime('site_settings', () => {
+    getSiteSettings().then((res) => {
+      if (res) setSettings(res)
+    })
+  })
+
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    }
+    checkDark()
+
+    const observer = new MutationObserver(() => {
+      checkDark()
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const logoUrl = resolveSiteLogoUrl(settings, isDark)
+
   const whatsAppUrl = buildWhatsAppLink(
     '5521988831253',
     'Olá! Conheci a história da Tasty Aromas e Sabores no site e gostaria de solicitar atendimento.',
@@ -63,10 +95,18 @@ export default function QuemSomos(): JSX.Element {
       {/* Hero Header */}
       <section className="text-center max-w-3xl mx-auto space-y-4">
         <div className="flex justify-center mb-2">
-          <BrandLogo
-            className="h-16 md:h-20 w-auto object-contain drop-shadow-sm"
-            alt="Tasty Aromas e Sabores"
-          />
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="Tasty Aromas e Sabores"
+              className="h-16 md:h-20 w-auto max-w-[260px] object-contain drop-shadow-sm"
+            />
+          ) : (
+            <BrandLogo
+              className="h-16 md:h-20 w-auto object-contain drop-shadow-sm"
+              alt="Tasty Aromas e Sabores"
+            />
+          )}
         </div>
         <Badge className="bg-primary/10 text-primary dark:bg-primary/25 border-primary/20 font-display font-semibold px-4 py-1.5 rounded-full text-xs uppercase tracking-wider">
           Desde 1987 • Tradição e Inovação

@@ -32,6 +32,8 @@ export interface SiteSettings {
   facebook?: string
   instagram?: string
   whatsapp?: string
+  orgChartImage?: string
+  flowChartImage?: string
   created?: string
   updated?: string
 }
@@ -67,6 +69,8 @@ export interface SiteSettingsUpdateInput {
   facebook?: string
   instagram?: string
   whatsapp?: string
+  orgChartImage?: File | string | null
+  flowChartImage?: File | string | null
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
@@ -83,11 +87,42 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
 export function getFileUrl(
   collectionNameOrId: string,
   recordId: string,
-  filename: string,
+  filename?: string,
   thumb?: string,
 ): string {
   if (!filename) return ''
   return pb.files.getURL({ id: recordId, collectionName: collectionNameOrId }, filename, { thumb })
+}
+
+/**
+ * Resolves the appropriate logo URL from site_settings based on the active theme mode.
+ * - In dark mode: returns logoDark if configured, falling back to standard logo.
+ * - In light mode: returns standard logo if configured, falling back to logoDark if standard is not set.
+ * Returns null if neither is configured.
+ */
+export function resolveSiteLogoUrl(
+  settings: SiteSettings | null | undefined,
+  isDark: boolean,
+): string | null {
+  if (!settings || !settings.id) return null
+
+  if (isDark) {
+    if (settings.logoDark) {
+      return getFileUrl('site_settings', settings.id, settings.logoDark)
+    }
+    if (settings.logo) {
+      return getFileUrl('site_settings', settings.id, settings.logo)
+    }
+    return null
+  }
+
+  if (settings.logo) {
+    return getFileUrl('site_settings', settings.id, settings.logo)
+  }
+  if (settings.logoDark) {
+    return getFileUrl('site_settings', settings.id, settings.logoDark)
+  }
+  return null
 }
 
 export async function saveSiteSettings(data: SiteSettingsUpdateInput): Promise<SiteSettings> {
