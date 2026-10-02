@@ -13,6 +13,7 @@ import {
   type ProductCategory,
 } from '@/services/products'
 import { getFileUrl, getSiteSettings, saveSiteSettings } from '@/services/siteSettings'
+import { sanitizeHtml } from '@/lib/sanitize'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { useAuth } from '@/hooks/useAuth'
 import { ImageUploader } from '@/components/admin/ImageUploader'
@@ -319,7 +320,7 @@ export function TabProducts(): JSX.Element {
                       {prod.description && (
                         <div
                           className="text-xs text-muted-foreground line-clamp-1 max-w-md"
-                          dangerouslySetInnerHTML={{ __html: prod.description }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(prod.description) }}
                         />
                       )}
                     </td>

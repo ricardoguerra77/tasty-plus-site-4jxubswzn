@@ -2,6 +2,7 @@ import { useState, useEffect, type JSX } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getNewsBySlug, getNewsById, type NewsArticle } from '@/services/news'
 import { getFileUrl } from '@/services/siteSettings'
+import { sanitizeHtml } from '@/lib/sanitize'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { useAuth } from '@/hooks/useAuth'
 import { canViewNewsArticle } from '@/lib/news-helpers'
@@ -211,7 +212,7 @@ export default function NoticiaDetalhe(): JSX.Element {
             {/* Rich-Text Body */}
             <div
               className="prose prose-neutral dark:prose-invert max-w-none pt-4 text-foreground/90 leading-relaxed text-base sm:text-lg"
-              dangerouslySetInnerHTML={{ __html: article.body }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.body) }}
             />
 
             {/* Footer / CTA back to news */}

@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/hooks/use-toast'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
+import { sanitizeHtml } from '@/lib/sanitize'
 import { getHeroOverlayDecimalOpacity } from '@/lib/hero-overlay'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
 import { StateFeedback } from '@/components/StateFeedback'
@@ -492,7 +493,7 @@ export default function Home(): JSX.Element {
               {settings?.companyIntro ? (
                 <div
                   className="text-muted-foreground leading-relaxed text-base prose prose-sm dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: settings.companyIntro }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(settings.companyIntro) }}
                 />
               ) : (
                 <p className="text-muted-foreground leading-relaxed text-base">
@@ -515,7 +516,7 @@ export default function Home(): JSX.Element {
                 {settings?.mission ? (
                   <div
                     className="text-xs sm:text-sm text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert"
-                    dangerouslySetInnerHTML={{ __html: settings.mission }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(settings.mission) }}
                   />
                 ) : (
                   <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -534,7 +535,7 @@ export default function Home(): JSX.Element {
                 {settings?.vision ? (
                   <div
                     className="text-xs sm:text-sm text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert"
-                    dangerouslySetInnerHTML={{ __html: settings.vision }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(settings.vision) }}
                   />
                 ) : (
                   <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -553,7 +554,7 @@ export default function Home(): JSX.Element {
                 {settings?.values ? (
                   <div
                     className="text-xs sm:text-sm text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert"
-                    dangerouslySetInnerHTML={{ __html: settings.values }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(settings.values) }}
                   />
                 ) : (
                   <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
