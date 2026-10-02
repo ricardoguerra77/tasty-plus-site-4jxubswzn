@@ -10,13 +10,15 @@ import { routesConfig } from '@/config/navigation'
  */
 
 describe('Functional Scenarios: Public Pages Specifications', () => {
-  it('registers all 9 core routes including /, /produtos, /representantes, /contato', () => {
+  it('registers all core routes including /, /quem-somos, /produtos, /qualidade, /representantes, /contato', () => {
     const paths = routesConfig.map((r) => r.path)
     expect(paths).toContain('/')
+    expect(paths).toContain('/quem-somos')
     expect(paths).toContain('/produtos')
+    expect(paths).toContain('/qualidade')
     expect(paths).toContain('/representantes')
     expect(paths).toContain('/contato')
-    expect(paths).toHaveLength(9)
+    expect(paths).toHaveLength(11)
   })
 
   it('home sample button points to correct WhatsApp sales number 21 98883-1253', () => {

@@ -64,8 +64,24 @@ export function Footer(): JSX.Element {
             </div>
             <p className="text-xs font-semibold text-accent">A fórmula certa para a sua empresa</p>
             <p className="text-xs text-slate-300 leading-relaxed">
-              [Sobre a Tasty Aromas e Sabores — texto institucional em breve]
+              Especializada em aromas e aditivos para alimentos e bebidas desde 1987. A fórmula
+              certa para a sua empresa.
             </p>
+            <div className="pt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-300">
+              <Link
+                to="/quem-somos"
+                className="hover:text-accent transition-colors underline underline-offset-2"
+              >
+                Quem Somos
+              </Link>
+              <span className="text-slate-500">•</span>
+              <Link
+                to="/qualidade"
+                className="hover:text-accent transition-colors underline underline-offset-2"
+              >
+                Qualidade
+              </Link>
+            </div>
           </div>
 
           {/* Col 2: Endereço */}

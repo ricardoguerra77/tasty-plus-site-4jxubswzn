@@ -2,14 +2,16 @@ import { describe, it, expect } from 'vitest'
 import { routesConfig, mainNavLinks } from '@/config/navigation'
 
 describe('Navigation and Routes configuration (navigation.ts)', () => {
-  it('registers exactly 9 routes', () => {
-    expect(routesConfig).toHaveLength(9)
+  it('registers exactly 11 routes', () => {
+    expect(routesConfig).toHaveLength(11)
   })
 
   it('all expected paths are present', () => {
     const expectedPaths = [
       '/',
+      '/quem-somos',
       '/produtos',
+      '/qualidade',
       '/representantes',
       '/noticias',
       '/noticias/:id',
@@ -33,11 +35,13 @@ describe('Navigation and Routes configuration (navigation.ts)', () => {
     })
   })
 
-  it('main navigation exports the 5 public links with correct labels', () => {
-    expect(mainNavLinks).toHaveLength(5)
+  it('main navigation exports the 7 public links with correct labels', () => {
+    expect(mainNavLinks).toHaveLength(7)
     expect(mainNavLinks).toEqual([
       { path: '/', label: 'Início' },
+      { path: '/quem-somos', label: 'Quem Somos' },
       { path: '/produtos', label: 'Produtos' },
+      { path: '/qualidade', label: 'Qualidade' },
       { path: '/representantes', label: 'Representantes' },
       { path: '/noticias', label: 'Notícias' },
       { path: '/contato', label: 'Contato' },

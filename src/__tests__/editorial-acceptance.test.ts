@@ -219,14 +219,16 @@ describe('Editorial Acceptance Functional Scenarios (Playwright / Functional Acc
     expect(result.heroSlide1Title).toBe('Liderança Tecnológica em Aromas Industriais')
   })
 
-  it('Scenario G: Reloading or opening the site in a new session keeps data correct and preserves all 9 routes', () => {
-    // Check all 9 registered routes
+  it('Scenario G: Reloading or opening the site in a new session keeps data correct and preserves all registered routes including /qualidade and /quem-somos', () => {
+    // Check all 11 registered routes
     const registeredPaths = routesConfig.map((r) => r.path)
-    expect(registeredPaths).toHaveLength(9)
+    expect(registeredPaths).toHaveLength(11)
 
     const expectedPaths = [
       '/',
+      '/quem-somos',
       '/produtos',
+      '/qualidade',
       '/representantes',
       '/noticias',
       '/noticias/:id',

@@ -26,11 +26,25 @@ export const routesConfig: RouteConfig[] = [
     navLabel: 'Início',
   },
   {
+    path: '/quem-somos',
+    title: 'Quem Somos',
+    lazyComponent: lazy(() => import('@/pages/QuemSomos')),
+    isNav: true,
+    navLabel: 'Quem Somos',
+  },
+  {
     path: '/produtos',
     title: 'Produtos',
     lazyComponent: lazy(() => import('@/pages/Produtos')),
     isNav: true,
     navLabel: 'Produtos',
+  },
+  {
+    path: '/qualidade',
+    title: 'Qualidade',
+    lazyComponent: lazy(() => import('@/pages/Qualidade')),
+    isNav: true,
+    navLabel: 'Qualidade',
   },
   {
     path: '/representantes',
@@ -79,7 +93,9 @@ export const routesConfig: RouteConfig[] = [
 
 export const mainNavLinks: NavLinkItem[] = [
   { path: '/', label: 'Início' },
+  { path: '/quem-somos', label: 'Quem Somos' },
   { path: '/produtos', label: 'Produtos' },
+  { path: '/qualidade', label: 'Qualidade' },
   { path: '/representantes', label: 'Representantes' },
   { path: '/noticias', label: 'Notícias' },
   { path: '/contato', label: 'Contato' },
