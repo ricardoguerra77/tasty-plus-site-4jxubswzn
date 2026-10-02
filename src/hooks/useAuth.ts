@@ -34,6 +34,7 @@ export interface UseAuthReturn extends AuthState {
   logout: () => void
   refreshAuth: () => Promise<void>
   requestPasswordReset: (email: string) => Promise<void>
+  confirmPasswordReset: (token: string, password: string) => Promise<void>
 }
 
 /**
@@ -78,6 +79,17 @@ export function getAuthErrorMessage(error: unknown): string {
       return 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.'
     }
     if (error.status === 400 || error.status === 404) {
+      const dataMsg =
+        typeof error.data?.message === 'string' ? error.data.message.toLowerCase() : ''
+      const rawMsg = error.message.toLowerCase()
+      if (
+        dataMsg.includes('token') ||
+        dataMsg.includes('reset') ||
+        rawMsg.includes('token') ||
+        rawMsg.includes('reset')
+      ) {
+        return 'Link inválido ou expirado. Solicite uma nova redefinição.'
+      }
       return 'E-mail ou senha incorretos. Verifique suas credenciais.'
     }
     if (error.status === 403) {
@@ -171,6 +183,20 @@ export function useAuth(): UseAuthReturn {
     }
   }, [])
 
+  const confirmPasswordReset = useCallback(
+    async (resetToken: string, newPassword: string): Promise<void> => {
+      setIsLoading(true)
+      try {
+        await pb
+          .collection('users')
+          .confirmPasswordReset(resetToken.trim(), newPassword, newPassword)
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [],
+  )
+
   return {
     user,
     token,
@@ -183,6 +209,7 @@ export function useAuth(): UseAuthReturn {
     logout,
     refreshAuth,
     requestPasswordReset,
+    confirmPasswordReset,
   }
 }
 

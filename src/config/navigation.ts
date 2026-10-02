@@ -78,6 +78,11 @@ export const routesConfig: RouteConfig[] = [
     lazyComponent: lazy(() => import('@/pages/Login')),
   },
   {
+    path: '/reset-password',
+    title: 'Redefinir Senha',
+    lazyComponent: lazy(() => import('@/pages/ResetPassword')),
+  },
+  {
     path: '/admin',
     title: 'Admin',
     lazyComponent: lazy(() => import('@/pages/Admin')),

@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { routesConfig, mainNavLinks } from '@/config/navigation'
 
 describe('Navigation and Routes configuration (navigation.ts)', () => {
-  it('registers exactly 11 routes', () => {
-    expect(routesConfig).toHaveLength(11)
+  it('registers exactly 12 routes', () => {
+    expect(routesConfig).toHaveLength(12)
   })
 
   it('all expected paths are present', () => {
@@ -17,6 +17,7 @@ describe('Navigation and Routes configuration (navigation.ts)', () => {
       '/noticias/:id',
       '/contato',
       '/login',
+      '/reset-password',
       '/admin',
       '/admin/noticias',
     ]

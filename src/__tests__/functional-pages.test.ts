@@ -18,7 +18,7 @@ describe('Functional Scenarios: Public Pages Specifications', () => {
     expect(paths).toContain('/qualidade')
     expect(paths).toContain('/representantes')
     expect(paths).toContain('/contato')
-    expect(paths).toHaveLength(11)
+    expect(paths).toHaveLength(12)
   })
 
   it('home sample button points to correct WhatsApp sales number 21 98883-1253', () => {

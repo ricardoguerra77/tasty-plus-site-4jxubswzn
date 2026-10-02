@@ -58,6 +58,24 @@ export function validateMinLength(
   return null
 }
 
+export function validatePassword(password: string): string | null {
+  const reqError = validateRequired(password, 'Senha')
+  if (reqError) return reqError
+  if (password.length < 8) {
+    return 'A senha deve ter pelo menos 8 caracteres.'
+  }
+  return null
+}
+
+export function validatePasswordMatch(password: string, confirmation: string): string | null {
+  const confirmReq = validateRequired(confirmation, 'Confirmação de senha')
+  if (confirmReq) return confirmReq
+  if (password !== confirmation) {
+    return 'As senhas não coincidem.'
+  }
+  return null
+}
+
 export function validateFile(
   file: File | null | undefined,
   options: {

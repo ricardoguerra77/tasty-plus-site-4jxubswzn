@@ -253,9 +253,9 @@ describe('Editorial Acceptance Functional Scenarios (Playwright / Functional Acc
   })
 
   it('Scenario G: Reloading or opening the site in a new session keeps data correct and preserves all registered routes including /qualidade and /quem-somos', () => {
-    // Check all 11 registered routes
+    // Check all 12 registered routes
     const registeredPaths = routesConfig.map((r) => r.path)
-    expect(registeredPaths).toHaveLength(11)
+    expect(registeredPaths).toHaveLength(12)
 
     const expectedPaths = [
       '/',
@@ -267,6 +267,7 @@ describe('Editorial Acceptance Functional Scenarios (Playwright / Functional Acc
       '/noticias/:id',
       '/contato',
       '/login',
+      '/reset-password',
       '/admin',
       '/admin/noticias',
     ]
