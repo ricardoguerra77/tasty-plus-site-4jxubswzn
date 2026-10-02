@@ -90,12 +90,10 @@ test.describe('Tasty Plus Institutional Website - Desktop Navigation & Flow', ()
     // Visit /contato
     await page.goto('/contato')
     await expect(page.getByRole('heading', { level: 1, name: 'Contato' })).toBeVisible()
-    await expect(page.getByText('21 2658-3517')).toBeVisible()
 
     // Footer verification
-    await expect(
-      page.getByText('Rua Otacílio Roxo, 150, Bairro Cerâmica, Nova Iguaçu-RJ'),
-    ).toBeVisible()
+    await expect(page.getByText(/Otacílio Roxo/i)).toBeVisible()
+    await expect(page.getByText(/26\.030-800|Cerâmica/i)).toBeVisible()
     await expect(page.getByText('tasty@tastyplus.com.br')).toBeVisible()
     await expect(page.getByText(/Todos os direitos reservados/)).toBeVisible()
 

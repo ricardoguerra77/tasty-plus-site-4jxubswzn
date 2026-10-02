@@ -193,26 +193,26 @@ export default function Contato(): JSX.Element {
     }
   }
 
-  // Address fallback
-  const displayAddress =
-    settings?.address || 'Rua Otacílio Roxo, 150, Bairro Cerâmica, Nova Iguaçu-RJ'
-  const displayPhoneFixed = settings?.phoneFixed || '21 2658-3517'
-  const displayPhoneSales = settings?.phoneSales || '21 98883-1253'
-  const displayPhoneFinance = settings?.phoneFinance || '21 98835-8373'
-  const displayEmail = settings?.email || 'tasty@tastyplus.com.br'
-  const displayHoursWeek = settings?.hoursWeek || 'Segunda a Quinta: 07:30 às 17:30'
-  const displayHoursFriday = settings?.hoursFriday || 'Sexta-feira: 07:30 às 16:30'
+  const rawAddress = settings?.address?.trim()
+  const rawPhoneFixed = settings?.phoneFixed?.trim()
+  const rawPhoneSales = settings?.phoneSales?.trim()
+  const rawPhoneFinance = settings?.phoneFinance?.trim()
+  const rawEmail = settings?.email?.trim()
+  const rawHoursWeek = settings?.hoursWeek?.trim()
+  const rawHoursFriday = settings?.hoursFriday?.trim()
+  const rawMapEmbed = settings?.mapEmbed?.trim()
 
-  // Map embed URL: if valid embed URL, use as iframe src, otherwise default to search iframe
-  const mapEmbedUrl = settings?.mapEmbed
-    ? settings.mapEmbed.includes('output=embed') || settings.mapEmbed.includes('embed')
-      ? settings.mapEmbed
+  const hasPhones = Boolean(rawPhoneFixed || rawPhoneSales || rawPhoneFinance)
+  const hasHours = Boolean(rawHoursWeek || rawHoursFriday)
+
+  // Map embed URL directly from site_settings (only if configured)
+  const mapEmbedUrl = rawMapEmbed
+    ? rawMapEmbed.includes('output=embed') || rawMapEmbed.includes('embed')
+      ? rawMapEmbed
       : `https://maps.google.com/maps?q=${encodeURIComponent(
-          settings.mapEmbed.replace('https://maps.google.com/?q=', ''),
+          rawMapEmbed.replace('https://maps.google.com/?q=', ''),
         )}&t=&z=15&ie=UTF8&iwloc=&output=embed`
-    : `https://maps.google.com/maps?q=${encodeURIComponent(
-        'Rua Otacílio Roxo, 150, Cerâmica, Nova Iguaçu - RJ',
-      )}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+    : ''
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12 animate-fade-in">
@@ -370,116 +370,146 @@ export default function Contato(): JSX.Element {
             </h3>
 
             {loadingSettings ? (
-              <div className="space-y-4 animate-pulse">
+              <div className="space-y-4 animate-pulse" data-testid="sidebar-contacts-loading">
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
               </div>
             ) : (
-              <div className="space-y-5 text-sm">
+              <div className="space-y-5 text-sm" data-testid="sidebar-contacts">
                 {/* Endereço */}
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <MapPin className="w-4 h-4" />
+                {rawAddress && (
+                  <div className="flex items-start gap-3" data-testid="sidebar-address">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
+                        Endereço
+                      </span>
+                      <p className="text-foreground leading-relaxed mt-0.5 whitespace-pre-line">
+                        {rawAddress}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
-                      Endereço
-                    </span>
-                    <p className="text-foreground leading-relaxed mt-0.5">{displayAddress}</p>
-                  </div>
-                </div>
+                )}
 
                 {/* Telefones */}
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Phone className="w-4 h-4" />
+                {hasPhones && (
+                  <div className="flex items-start gap-3" data-testid="sidebar-phones">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Phone className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
+                        Telefones de Atendimento
+                      </span>
+                      {rawPhoneFixed && (
+                        <p className="text-foreground">
+                          <span className="text-muted-foreground text-xs font-medium">Fixo:</span>{' '}
+                          <a
+                            href={`tel:+55${rawPhoneFixed.replace(/\D/g, '')}`}
+                            className="hover:text-primary transition-colors font-medium"
+                          >
+                            {rawPhoneFixed}
+                          </a>
+                        </p>
+                      )}
+                      {rawPhoneSales && (
+                        <p className="text-foreground">
+                          <span className="text-muted-foreground text-xs font-medium">Vendas:</span>{' '}
+                          <a
+                            href={`tel:+55${rawPhoneSales.replace(/\D/g, '')}`}
+                            className="hover:text-primary transition-colors font-medium"
+                          >
+                            {rawPhoneSales}
+                          </a>
+                        </p>
+                      )}
+                      {rawPhoneFinance && (
+                        <p className="text-foreground">
+                          <span className="text-muted-foreground text-xs font-medium">
+                            Financeiro:
+                          </span>{' '}
+                          <a
+                            href={`tel:+55${rawPhoneFinance.replace(/\D/g, '')}`}
+                            className="hover:text-primary transition-colors font-medium"
+                          >
+                            {rawPhoneFinance}
+                          </a>
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
-                      Telefones de Atendimento
-                    </span>
-                    <p className="text-foreground">
-                      <span className="text-muted-foreground text-xs font-medium">Fixo:</span>{' '}
-                      <a
-                        href={`tel:+55${displayPhoneFixed.replace(/\D/g, '')}`}
-                        className="hover:text-primary transition-colors font-medium"
-                      >
-                        {displayPhoneFixed}
-                      </a>
-                    </p>
-                    <p className="text-foreground">
-                      <span className="text-muted-foreground text-xs font-medium">Vendas:</span>{' '}
-                      <a
-                        href={`tel:+55${displayPhoneSales.replace(/\D/g, '')}`}
-                        className="hover:text-primary transition-colors font-medium"
-                      >
-                        {displayPhoneSales}
-                      </a>
-                    </p>
-                    <p className="text-foreground">
-                      <span className="text-muted-foreground text-xs font-medium">Financeiro:</span>{' '}
-                      <a
-                        href={`tel:+55${displayPhoneFinance.replace(/\D/g, '')}`}
-                        className="hover:text-primary transition-colors font-medium"
-                      >
-                        {displayPhoneFinance}
-                      </a>
-                    </p>
-                  </div>
-                </div>
+                )}
 
                 {/* E-mail */}
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Mail className="w-4 h-4" />
+                {rawEmail && (
+                  <div className="flex items-start gap-3" data-testid="sidebar-email">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
+                        E-mail Institucional
+                      </span>
+                      <a
+                        href={`mailto:${rawEmail}`}
+                        className="text-foreground hover:text-primary transition-colors font-medium break-all"
+                      >
+                        {rawEmail}
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
-                      E-mail Institucional
-                    </span>
-                    <a
-                      href={`mailto:${displayEmail}`}
-                      className="text-foreground hover:text-primary transition-colors font-medium break-all"
-                    >
-                      {displayEmail}
-                    </a>
-                  </div>
-                </div>
+                )}
 
                 {/* Horários */}
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Clock className="w-4 h-4" />
+                {hasHours && (
+                  <div className="flex items-start gap-3" data-testid="sidebar-hours">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
+                        Horário de Funcionamento
+                      </span>
+                      {rawHoursWeek && <p className="text-foreground">{rawHoursWeek}</p>}
+                      {rawHoursFriday && <p className="text-foreground">{rawHoursFriday}</p>}
+                    </div>
                   </div>
-                  <div className="space-y-0.5">
-                    <span className="font-semibold text-foreground block text-xs uppercase tracking-wider text-muted-foreground">
-                      Horário de Funcionamento
-                    </span>
-                    <p className="text-foreground">{displayHoursWeek}</p>
-                    <p className="text-foreground">{displayHoursFriday}</p>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Google Maps Responsive Embed */}
-          <div className="bg-card rounded-3xl border border-border p-3 overflow-hidden shadow-sm">
-            <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-muted/60">
-              <iframe
-                title="Localização Tasty Aromas e Sabores"
-                src={mapEmbedUrl}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full h-full"
-              />
+          {/* Google Maps Responsive Embed - only rendered if mapEmbed configured or loading */}
+          {loadingSettings ? (
+            <div
+              className="bg-card rounded-3xl border border-border p-3 overflow-hidden shadow-sm"
+              data-testid="map-loading"
+            >
+              <Skeleton className="w-full h-64 sm:h-72 rounded-2xl" />
             </div>
-          </div>
+          ) : mapEmbedUrl ? (
+            <div
+              className="bg-card rounded-3xl border border-border p-3 overflow-hidden shadow-sm"
+              data-testid="map-container"
+            >
+              <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-muted/60">
+                <iframe
+                  title="Localização Tasty Aromas e Sabores"
+                  src={mapEmbedUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 

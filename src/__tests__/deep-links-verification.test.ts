@@ -16,6 +16,7 @@ describe('Deep Link Routing & Catch-All Verification', () => {
     '/qualidade',
     '/representantes',
     '/noticias',
+    '/noticias/:id',
     '/contato',
     '/login',
     '/admin',
@@ -31,6 +32,22 @@ describe('Deep Link Routing & Catch-All Verification', () => {
       expect(match?.lazyComponent).toBeDefined()
       expect(match?.title).toBeTruthy()
     })
+  })
+
+  it('matches dynamic news article path like /noticias/mpocq1kvjkeuubh against /noticias/:id route', () => {
+    const dynamicPath = '/noticias/mpocq1kvjkeuubh'
+    const route = routesConfig.find((r) => {
+      if (r.path === dynamicPath) return true
+      if (r.path.includes(':')) {
+        const regex = new RegExp(`^${r.path.replace(/:[^/]+/g, '[^/]+')}$`)
+        return regex.test(dynamicPath)
+      }
+      return false
+    })
+
+    expect(route).toBeDefined()
+    expect(route?.path).toBe('/noticias/:id')
+    expect(route?.title).toBe('Notícia')
   })
 
   it('correctly distinguishes unknown URLs and marks them for catch-all (*)', () => {
