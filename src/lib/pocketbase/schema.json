@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T23:44:48.717Z",
+  "generatedAt": "2026-10-02T00:22:15.986Z",
   "collections": [
     {
       "name": "users",
@@ -247,6 +247,12 @@
         {
           "name": "logoDark",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heroOverlayOpacity",
+          "type": "number",
           "required": false,
           "system": false
         }

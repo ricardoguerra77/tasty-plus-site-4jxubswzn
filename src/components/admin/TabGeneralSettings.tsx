@@ -11,9 +11,11 @@ import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
+import { normalizeHeroOverlayPercent, DEFAULT_HERO_OVERLAY_OPACITY } from '@/lib/hero-overlay'
 import { Loader2, Save, CheckCircle2 } from 'lucide-react'
 
 export function TabGeneralSettings(): JSX.Element {
@@ -30,6 +32,7 @@ export function TabGeneralSettings(): JSX.Element {
   const [heroSlide2Subtitle, setHeroSlide2Subtitle] = useState<string>('')
   const [heroSlide3Title, setHeroSlide3Title] = useState<string>('')
   const [heroSlide3Subtitle, setHeroSlide3Subtitle] = useState<string>('')
+  const [heroOverlayOpacity, setHeroOverlayOpacity] = useState<number>(DEFAULT_HERO_OVERLAY_OPACITY)
 
   // Files
   const [logoFile, setLogoFile] = useState<File | null | undefined>(undefined)
@@ -75,6 +78,7 @@ export function TabGeneralSettings(): JSX.Element {
           setHeroSlide2Subtitle(data.heroSlide2Subtitle || '')
           setHeroSlide3Title(data.heroSlide3Title || '')
           setHeroSlide3Subtitle(data.heroSlide3Subtitle || '')
+          setHeroOverlayOpacity(normalizeHeroOverlayPercent(data.heroOverlayOpacity))
 
           setCompanyIntro(data.companyIntro || '')
           setMission(data.mission || '')
@@ -125,6 +129,7 @@ export function TabGeneralSettings(): JSX.Element {
         heroSlide2Subtitle,
         heroSlide3Title,
         heroSlide3Subtitle,
+        heroOverlayOpacity,
         companyIntro,
         mission,
         vision,
@@ -400,6 +405,39 @@ export function TabGeneralSettings(): JSX.Element {
               onFileSelect={(file) => setHeroImage3File(file)}
               disabled={saving}
             />
+          </div>
+
+          {/* Controle Global de Opacidade do Véu / Overlay */}
+          <div className="space-y-3 rounded-lg border p-4 bg-background">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="heroOverlayOpacity" className="text-sm font-semibold text-foreground">
+                Escurecimento das imagens do carrossel (%)
+              </Label>
+              <div className="flex items-center gap-2">
+                <span
+                  id="hero-overlay-opacity-display"
+                  className="inline-flex min-w-[3.5rem] items-center justify-center rounded-md border bg-muted px-2.5 py-1 font-mono text-sm font-bold text-primary"
+                >
+                  {heroOverlayOpacity}%
+                </span>
+              </div>
+            </div>
+            <Slider
+              id="heroOverlayOpacity"
+              min={0}
+              max={100}
+              step={1}
+              value={[heroOverlayOpacity]}
+              onValueChange={(vals) =>
+                setHeroOverlayOpacity(vals[0] ?? DEFAULT_HERO_OVERLAY_OPACITY)
+              }
+              disabled={saving}
+              className="py-2 cursor-pointer"
+            />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              0% deixa a imagem totalmente visível e valores altos escurecem mais para melhorar a
+              leitura do texto. Padrão sugerido: 45%.
+            </p>
           </div>
         </CardContent>
       </Card>

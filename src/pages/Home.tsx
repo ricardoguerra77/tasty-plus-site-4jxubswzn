@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/hooks/use-toast'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getSiteSettings, getFileUrl, type SiteSettings } from '@/services/siteSettings'
+import { getHeroOverlayDecimalOpacity } from '@/lib/hero-overlay'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
 import { StateFeedback } from '@/components/StateFeedback'
 
@@ -174,12 +175,19 @@ export default function Home(): JSX.Element {
               idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
-            {/* Background image with overlay */}
+            {/* Background image */}
             <div
-              className="absolute inset-0 bg-cover bg-center transform scale-105 transition-transform duration-7000 opacity-30"
+              className="absolute inset-0 bg-cover bg-center transform scale-105 transition-transform duration-7000"
               style={{ backgroundImage: `url(${slide.image})` }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(215,73%,12%)] via-[hsl(215,73%,14%)]/90 to-[hsl(215,73%,14%)]/60" />
+            {/* Configurable dark overlay veil over background image */}
+            <div
+              data-testid="hero-overlay-veil"
+              className="absolute inset-0 bg-gradient-to-r from-[hsl(215,73%,12%)] via-[hsl(215,73%,14%)] to-[hsl(215,73%,14%)] pointer-events-none transition-opacity duration-300"
+              style={{
+                opacity: getHeroOverlayDecimalOpacity(settings?.heroOverlayOpacity),
+              }}
+            />
 
             {/* Slide Content */}
             <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-24 md:py-32">
