@@ -50,6 +50,11 @@ export function TabGeneralSettings(): JSX.Element {
   const [values, setValues] = useState<string>('')
   const [history, setHistory] = useState<string>('')
 
+  // Destaques comerciais da página inicial
+  const [highlight1, setHighlight1] = useState<string>('')
+  const [highlight2, setHighlight2] = useState<string>('')
+  const [highlight3, setHighlight3] = useState<string>('')
+
   // ISO & Contact
   const [isoBadge, setIsoBadge] = useState<boolean>(false)
   const [address, setAddress] = useState<string>('')
@@ -87,6 +92,10 @@ export function TabGeneralSettings(): JSX.Element {
           setVision(data.vision || '')
           setValues(data.values || '')
           setHistory(data.history || '')
+
+          setHighlight1(data.highlight1 || '')
+          setHighlight2(data.highlight2 || '')
+          setHighlight3(data.highlight3 || '')
 
           setIsoBadge(Boolean(data.isoBadge))
           setAddress(data.address || '')
@@ -137,6 +146,9 @@ export function TabGeneralSettings(): JSX.Element {
         vision,
         values,
         history,
+        highlight1,
+        highlight2,
+        highlight3,
         isoBadge,
         address,
         phoneFixed,
@@ -448,7 +460,44 @@ export function TabGeneralSettings(): JSX.Element {
         </CardContent>
       </Card>
 
-      {/* 3. Textos Institucionais (Rich Text / Editor) */}
+      {/* 3. Destaques Comerciais da Página Inicial (Rich Text / Editor) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Destaques Comerciais da Página Inicial</CardTitle>
+          <CardDescription>
+            Edite o conteúdo dos 3 cards de destaque da página inicial utilizando o editor visual.
+            Deixe um campo em branco para ocultar o respectivo card.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <RichTextEditor
+            id="highlight1"
+            label="Destaque 1 — Adoçante Dietético"
+            value={highlight1}
+            onChange={setHighlight1}
+            disabled={saving}
+            rows={5}
+          />
+          <RichTextEditor
+            id="highlight2"
+            label="Destaque 2 — Café-Cola Gelado Tasty"
+            value={highlight2}
+            onChange={setHighlight2}
+            disabled={saving}
+            rows={5}
+          />
+          <RichTextEditor
+            id="highlight3"
+            label="Destaque 3 — NATU-COLA"
+            value={highlight3}
+            onChange={setHighlight3}
+            disabled={saving}
+            rows={5}
+          />
+        </CardContent>
+      </Card>
+
+      {/* 4. Textos Institucionais (Rich Text / Editor) */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Textos Institucionais</CardTitle>

@@ -75,10 +75,11 @@ describe('Unit Tests: News Engine Helpers', () => {
       expect(canView).toBe(true)
     })
 
-    it('editor and admin roles can view unpublished draft in preview/editorial contexts', () => {
+    it('editor, admin and super_admin roles can view unpublished draft in preview/editorial contexts', () => {
       const draftArticle = { title: 'Rascunho', published: false }
       expect(canViewNewsArticle(draftArticle, 'editor')).toBe(true)
       expect(canViewNewsArticle(draftArticle, 'admin')).toBe(true)
+      expect(canViewNewsArticle(draftArticle, 'super_admin')).toBe(true)
     })
 
     it('returns false when article is null or undefined', () => {
@@ -93,14 +94,17 @@ describe('Unit Tests: News Engine Helpers', () => {
       expect(canManageInstitutional('editor')).toBe(false)
     })
 
-    it('admin can access admin root and institutional settings', () => {
+    it('admin and super_admin can access admin root and institutional settings', () => {
       expect(canAccessAdmin('admin')).toBe(true)
+      expect(canAccessAdmin('super_admin')).toBe(true)
       expect(canManageInstitutional('admin')).toBe(true)
+      expect(canManageInstitutional('super_admin')).toBe(true)
     })
 
-    it('both editor and admin can access editorial news section', () => {
+    it('editor, admin and super_admin can access editorial news section', () => {
       expect(canAccessEditorial('editor')).toBe(true)
       expect(canAccessEditorial('admin')).toBe(true)
+      expect(canAccessEditorial('super_admin')).toBe(true)
     })
 
     it('unauthenticated or visitor has no access to admin or editorial', () => {

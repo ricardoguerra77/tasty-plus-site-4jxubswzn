@@ -35,6 +35,9 @@ export interface SiteSettings {
   whatsapp?: string
   orgChartImage?: string
   flowChartImage?: string
+  highlight1?: string
+  highlight2?: string
+  highlight3?: string
   created?: string
   updated?: string
 }
@@ -73,6 +76,9 @@ export interface SiteSettingsUpdateInput {
   whatsapp?: string
   orgChartImage?: File | string | null
   flowChartImage?: File | string | null
+  highlight1?: string
+  highlight2?: string
+  highlight3?: string
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {

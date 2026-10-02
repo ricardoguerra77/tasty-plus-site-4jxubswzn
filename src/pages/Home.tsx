@@ -261,194 +261,165 @@ export default function Home(): JSX.Element {
       </section>
 
       {/* 2. DESTAQUES COMERCIAIS */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-accent text-accent-foreground mb-3 font-display font-semibold px-3 py-1 rounded-full">
-              Inovação e Rendimento
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary tracking-tight font-display">
-              Destaques Comerciais Tasty Aromas e Sabores
-            </h2>
-            <p className="mt-3 text-muted-foreground text-sm sm:text-base">
-              Soluções inovadoras desenvolvidas para maximizar o rendimento, a rentabilidade e o
-              sabor na sua linha de produção.
-            </p>
-          </div>
+      {(() => {
+        const hasH1 = Boolean(
+          settings?.highlight1 &&
+          settings.highlight1.trim() !== '' &&
+          settings.highlight1.trim() !== '<p></p>',
+        )
+        const hasH2 = Boolean(
+          settings?.highlight2 &&
+          settings.highlight2.trim() !== '' &&
+          settings.highlight2.trim() !== '<p></p>',
+        )
+        const hasH3 = Boolean(
+          settings?.highlight3 &&
+          settings.highlight3.trim() !== '' &&
+          settings.highlight3.trim() !== '<p></p>',
+        )
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Card 1: Adoçante Dietético */}
-            <div className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
-              <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-display font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-wider">
-                Lançamento Especial
-              </div>
+        if (!hasH1 && !hasH2 && !hasH3) return null
 
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center mb-2">
-                  <Sparkles className="w-6 h-6 text-accent" />
-                </div>
-                <h3 className="text-2xl font-display font-bold text-primary">Adoçante Dietético</h3>
-                <p className="text-xs uppercase font-display font-semibold text-accent tracking-wider">
-                  Despacho para todo o Brasil
-                </p>
-                <div className="bg-secondary/50 rounded-xl p-4 space-y-2 text-sm text-foreground/90 border border-border/50">
-                  <p className="font-semibold text-lg text-primary">
-                    Caixa com 24 unidades{' '}
-                    <span className="text-xs font-normal text-muted-foreground">por apenas</span>
-                    <br />
-                    <span className="text-2xl font-display font-extrabold text-primary">
-                      R$ 600,00
-                    </span>{' '}
-                    <span className="text-xs text-accent font-bold">(Preço de lançamento)</span>
-                  </p>
-                  <div className="border-t border-border/40 pt-2 space-y-1.5 text-xs text-muted-foreground">
-                    <p className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      <strong>Poder edulcorante:</strong> 1kg adoa de 2.000 a 3.000 litros
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      <strong>Sem residual metálico:</strong> sabor limpo e arredondado
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      <strong className="text-accent">50% de economia</strong> em relação ao açúcar
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <strong className="text-primary">25% de desconto</strong> para clientes de
-                      aroma Tasty
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6">
-                <a
-                  href={sampleWhatsAppUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 font-display font-bold text-accent-foreground bg-accent hover:bg-accent-dark active:scale-95 transition-all p-3.5 rounded-xl shadow-md text-sm md:text-base text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <MessageCircle className="w-5 h-5 flex-shrink-0" />
-                  <span>Peça já a sua amostra grátis aqui!</span>
-                </a>
-                <p className="text-[11px] text-center text-muted-foreground mt-2">
-                  Atendimento direto WhatsApp: 21 98883-1253
-                </p>
-              </div>
-            </div>
-
-            {/* Card 2: Café-Cola Gelado Tasty */}
-            <div className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center mb-2">
-                  <Coffee className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-2xl font-display font-bold text-primary">
-                  Café-Cola Gelado Tasty
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Inovação refrescante unindo o melhor do café premium com a vibração da cola,
-                  disponível para licenciamento exclusivo de marcas.
-                </p>
-
-                <div className="space-y-3 pt-2">
-                  <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-foreground">Industrial</span>
-                    <Badge className="font-mono font-bold bg-accent text-accent-foreground">
-                      632x
-                    </Badge>
-                  </div>
-                  <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-foreground">Comercial</span>
-                    <Badge className="font-mono font-bold bg-accent text-accent-foreground">
-                      100x
-                    </Badge>
-                  </div>
-                  <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-foreground">Para o lar</span>
-                    <Badge className="font-mono font-bold bg-accent text-accent-foreground">
-                      10x
-                    </Badge>
-                  </div>
-                </div>
-
-                <p className="text-xs text-muted-foreground pt-1">
-                  <strong>Licenciamento exclusivo:</strong> oportunidade única para engarrafadores e
-                  marcas próprias.
-                </p>
-              </div>
-
-              <div className="pt-6">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full font-display font-bold border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  <a
-                    href={buildWhatsAppLink(
-                      DEFAULT_SALES_PHONE,
-                      'Olá! Gostaria de consultar sobre o licenciamento do Café-Cola gelado Tasty.',
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Consultar Licenciamento
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-
-            {/* Card 3: NATU-COLA */}
-            <div className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center mb-2">
-                  <Leaf className="w-6 h-6 text-accent" />
-                </div>
-                <h3 className="text-2xl font-display font-bold text-primary">NATU-COLA</h3>
-                <Badge className="bg-accent text-accent-foreground hover:bg-accent-dark font-display font-semibold rounded-full w-fit">
-                  100% Natural
+        return (
+          <section data-testid="section-highlights" className="py-16 md:py-24 bg-background">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-12">
+                <Badge className="bg-accent text-accent-foreground mb-3 font-display font-semibold px-3 py-1 rounded-full">
+                  Inovação e Rendimento
                 </Badge>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Sabor cola 100% autêntico e natural extraído diretamente da noz de cola. A
-                  resposta perfeita para o mercado de refrigerantes artesanais, clean label e
-                  bebidas premium.
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary tracking-tight font-display">
+                  Destaques Comerciais Tasty Aromas e Sabores
+                </h2>
+                <p className="mt-3 text-muted-foreground text-sm sm:text-base">
+                  Soluções inovadoras desenvolvidas para maximizar o rendimento, a rentabilidade e o
+                  sabor na sua linha de produção.
                 </p>
-
-                <div className="bg-secondary/50 rounded-xl p-4 space-y-2 border border-border/50 text-xs text-muted-foreground">
-                  <p>
-                    ✓ <strong>Extrato de Noz de Cola</strong> certificado
-                  </p>
-                  <p>✓ Estabilidade térmica e sensorial comprovada</p>
-                  <p>✓ Ideal para bebidas gaseificadas e xaropes artesanais</p>
-                </div>
               </div>
 
-              <div className="pt-6">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full font-display font-bold border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  <a
-                    href={buildWhatsAppLink(
-                      DEFAULT_SALES_PHONE,
-                      'Olá! Gostaria de cotação e ficha técnica do NATU-COLA Tasty Aromas e Sabores.',
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Card 1: Adoçante Dietético */}
+                {hasH1 && (
+                  <div
+                    data-testid="highlight-card-1"
+                    className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden group"
                   >
-                    Solicitar Cotação NATU-COLA
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </a>
-                </Button>
+                    <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-display font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-wider">
+                      Lançamento Especial
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center mb-2">
+                        <Sparkles className="w-6 h-6 text-accent" />
+                      </div>
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none text-foreground [&_h3]:text-2xl [&_h3]:font-display [&_h3]:font-bold [&_h3]:text-primary [&_h3]:mb-1 [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_li]:text-xs [&_li]:text-muted-foreground"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(settings?.highlight1 || ''),
+                        }}
+                      />
+                    </div>
+
+                    <div className="pt-6">
+                      <a
+                        href={sampleWhatsAppUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full inline-flex items-center justify-center gap-2 font-display font-bold text-accent-foreground bg-accent hover:bg-accent-dark active:scale-95 transition-all p-3.5 rounded-xl shadow-md text-sm md:text-base text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <MessageCircle className="w-5 h-5 flex-shrink-0" />
+                        <span>Peça já a sua amostra grátis aqui!</span>
+                      </a>
+                      <p className="text-[11px] text-center text-muted-foreground mt-2">
+                        Atendimento direto WhatsApp: {settings?.phoneSales || DEFAULT_SALES_PHONE}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Card 2: Café-Cola Gelado Tasty */}
+                {hasH2 && (
+                  <div
+                    data-testid="highlight-card-2"
+                    className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center mb-2">
+                        <Coffee className="w-6 h-6 text-primary" />
+                      </div>
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none text-foreground [&_h3]:text-2xl [&_h3]:font-display [&_h3]:font-bold [&_h3]:text-primary [&_h3]:mb-1 [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_li]:text-xs [&_li]:text-muted-foreground"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(settings?.highlight2 || ''),
+                        }}
+                      />
+                    </div>
+
+                    <div className="pt-6">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full font-display font-bold border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        <a
+                          href={buildWhatsAppLink(
+                            settings?.phoneSales || DEFAULT_SALES_PHONE,
+                            'Olá! Gostaria de consultar sobre o licenciamento do Café-Cola gelado Tasty.',
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Consultar Licenciamento
+                          <ExternalLink className="w-4 h-4 ml-2" />
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Card 3: NATU-COLA */}
+                {hasH3 && (
+                  <div
+                    data-testid="highlight-card-3"
+                    className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center mb-2">
+                        <Leaf className="w-6 h-6 text-accent" />
+                      </div>
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none text-foreground [&_h3]:text-2xl [&_h3]:font-display [&_h3]:font-bold [&_h3]:text-primary [&_h3]:mb-1 [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_li]:text-xs [&_li]:text-muted-foreground"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(settings?.highlight3 || ''),
+                        }}
+                      />
+                    </div>
+
+                    <div className="pt-6">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full font-display font-bold border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        <a
+                          href={buildWhatsAppLink(
+                            settings?.phoneSales || DEFAULT_SALES_PHONE,
+                            'Olá! Gostaria de cotação e ficha técnica do NATU-COLA Tasty Aromas e Sabores.',
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Solicitar Cotação NATU-COLA
+                          <ExternalLink className="w-4 h-4 ml-2" />
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        )
+      })()}
 
       {/* 3. BANNER ISO 9001 (CONDICIONAL) */}
       {settings?.isoBadge && (

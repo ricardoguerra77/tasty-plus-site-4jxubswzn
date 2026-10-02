@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T17:12:02.607Z",
+  "generatedAt": "2026-10-02T17:20:34.213Z",
   "collections": [
     {
       "name": "users",
@@ -57,9 +57,9 @@
       "apiRules": {
         "list": "",
         "view": "",
-        "create": "@request.auth.id != '' && @request.auth.role = 'admin'",
-        "update": "@request.auth.id != '' && @request.auth.role = 'admin'",
-        "delete": "@request.auth.id != '' && @request.auth.role = 'admin'"
+        "create": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')",
+        "update": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')",
+        "delete": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')"
       },
       "fields": [
         {
@@ -273,6 +273,24 @@
           "type": "json",
           "required": false,
           "system": false
+        },
+        {
+          "name": "highlight1",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "highlight2",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "highlight3",
+          "type": "editor",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
@@ -281,11 +299,11 @@
       "name": "products",
       "type": "base",
       "apiRules": {
-        "list": "published = true || (@request.auth.id != '' && @request.auth.role = 'admin')",
-        "view": "published = true || (@request.auth.id != '' && @request.auth.role = 'admin')",
-        "create": "@request.auth.id != '' && @request.auth.role = 'admin'",
-        "update": "@request.auth.id != '' && @request.auth.role = 'admin'",
-        "delete": "@request.auth.id != '' && @request.auth.role = 'admin'"
+        "list": "published = true || (@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin'))",
+        "view": "published = true || (@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin'))",
+        "create": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')",
+        "update": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')",
+        "delete": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')"
       },
       "fields": [
         {
@@ -349,11 +367,11 @@
       "name": "news",
       "type": "base",
       "apiRules": {
-        "list": "published = true || (@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor'))",
-        "view": "published = true || (@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor'))",
-        "create": "@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor')",
-        "update": "@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor')",
-        "delete": "@request.auth.id != '' && (@request.auth.role = 'admin' || @request.auth.role = 'editor')"
+        "list": "published = true || (@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin' || @request.auth.role = 'editor'))",
+        "view": "published = true || (@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin' || @request.auth.role = 'editor'))",
+        "create": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin' || @request.auth.role = 'editor')",
+        "update": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin' || @request.auth.role = 'editor')",
+        "delete": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin' || @request.auth.role = 'editor')"
       },
       "fields": [
         {
@@ -437,9 +455,9 @@
       "apiRules": {
         "list": "",
         "view": "",
-        "create": "@request.auth.id != '' && @request.auth.role = 'admin'",
-        "update": "@request.auth.id != '' && @request.auth.role = 'admin'",
-        "delete": "@request.auth.id != '' && @request.auth.role = 'admin'"
+        "create": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')",
+        "update": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')",
+        "delete": "@request.auth.id != '' && (@request.auth.role = 'super_admin' || @request.auth.role = 'admin')"
       },
       "fields": [
         {
