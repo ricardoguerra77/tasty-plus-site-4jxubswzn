@@ -47,7 +47,7 @@ export async function createUser(data: CreateUserInput): Promise<ManagedUser> {
       password: data.password,
       passwordConfirm: data.passwordConfirm,
       role: data.role,
-      emailVisibility: false,
+      emailVisibility: true,
     },
     { requestKey: null },
   )

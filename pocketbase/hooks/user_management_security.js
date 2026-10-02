@@ -22,6 +22,9 @@ onRecordCreateRequest((e) => {
     throw new BadRequestError('O papel do novo usuário deve ser admin ou editor.')
   }
 
+  // Ensure emailVisibility is true so admins can view user emails in management table
+  e.record.set('emailVisibility', true)
+
   e.next()
 }, 'users')
 

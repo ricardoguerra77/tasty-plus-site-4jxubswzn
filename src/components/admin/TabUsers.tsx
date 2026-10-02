@@ -10,6 +10,7 @@ import {
   RefreshCw,
   X,
   AlertCircle,
+  KeyRound,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from '@/hooks/use-toast'
@@ -55,11 +56,12 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export function TabUsers(): JSX.Element {
-  const { user: currentUser, isSuperAdmin } = useAuth()
+  const { user: currentUser, isSuperAdmin, requestPasswordReset } = useAuth()
 
   const [users, setUsers] = useState<ManagedUser[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [resettingUserId, setResettingUserId] = useState<string | null>(null)
 
   // Create User Modal State
   const [createModalOpen, setCreateModalOpen] = useState<boolean>(false)
@@ -300,6 +302,48 @@ export function TabUsers(): JSX.Element {
     }
   }
 
+  // Password reset handler per user row
+  const handleSendPasswordReset = async (targetUser: ManagedUser) => {
+    if (!targetUser.email) {
+      toast({
+        variant: 'destructive',
+        title: 'E-mail não disponível',
+        description: 'Este usuário não possui um endereço de e-mail cadastrado.',
+      })
+      return
+    }
+
+    setResettingUserId(targetUser.id)
+    try {
+      await requestPasswordReset(targetUser.email)
+      toast({
+        title: 'Link de redefinição enviado',
+        description: `Link de redefinição enviado para ${targetUser.email}`,
+      })
+    } catch (err: unknown) {
+      const rawMsg = err instanceof Error ? err.message.toLowerCase() : ''
+      const isSmtpErr =
+        rawMsg.includes('smtp') ||
+        rawMsg.includes('mail') ||
+        rawMsg.includes('email') ||
+        rawMsg.includes('send')
+
+      let description = 'Ocorreu um erro ao enviar o link de redefinição. Tente novamente.'
+      if (isSmtpErr) {
+        description =
+          'O serviço de envio de e-mails não está configurado no servidor. Tente novamente mais tarde.'
+      }
+
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao enviar redefinição',
+        description,
+      })
+    } finally {
+      setResettingUserId(null)
+    }
+  }
+
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'super_admin':
@@ -420,6 +464,27 @@ export function TabUsers(): JSX.Element {
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            {u.email && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleSendPasswordReset(u)}
+                                disabled={resettingUserId === u.id}
+                                className="h-8 px-2 cursor-pointer text-muted-foreground hover:text-primary gap-1.5"
+                                title={`Enviar link de redefinição para ${u.email}`}
+                              >
+                                {resettingUserId === u.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                                ) : (
+                                  <KeyRound className="w-4 h-4" />
+                                )}
+                                <span className="hidden xl:inline text-xs">
+                                  {resettingUserId === u.id ? 'Enviando...' : 'Redefinir senha'}
+                                </span>
+                                <span className="sr-only">Enviar link de redefinição</span>
+                              </Button>
+                            )}
+
                             {canEditOrDelete ? (
                               <>
                                 <Button

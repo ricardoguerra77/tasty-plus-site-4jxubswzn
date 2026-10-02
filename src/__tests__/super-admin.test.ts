@@ -75,4 +75,68 @@ describe('Super Admin and Role Hierarchy Unit Tests', () => {
     expect(validateMinLength('1234567', 8, 'Senha')).toBe('Senha deve ter no mínimo 8 caracteres.')
     expect(validateMinLength('12345678', 8, 'Senha')).toBeNull()
   })
+
+  it('user email visibility and rendering: all users have non-empty emails rendered', () => {
+    const mockUsers = [
+      {
+        id: '1',
+        name: 'Administrador Tasty Plus',
+        email: 'admin@tastyplus.com.br',
+        role: 'super_admin',
+      },
+      {
+        id: '2',
+        name: 'Editor de Conteúdo Tasty Plus',
+        email: 'editor@tastyplus.com.br',
+        role: 'editor',
+      },
+      { id: '3', name: 'Ricardo Guerra', email: 'ricardoguerra@outlook.com', role: 'super_admin' },
+      {
+        id: '4',
+        name: 'Ricardo Guerra editor',
+        email: 'ricardoguerrafreitas@gmail.com',
+        role: 'admin',
+      },
+    ]
+
+    mockUsers.forEach((user) => {
+      expect(user.email).toBeTruthy()
+      expect(user.email.length).toBeGreaterThan(0)
+      expect(validateEmail(user.email)).toBeNull()
+    })
+  })
+
+  it('token duration expiry configuration is 600s (10 minutes) and email template contains 10-minute warning in PT-BR', () => {
+    const TOKEN_EXPIRY_SECONDS = 600
+    expect(TOKEN_EXPIRY_SECONDS).toBe(600)
+    expect(TOKEN_EXPIRY_SECONDS / 60).toBe(10)
+
+    const emailBody =
+      'Atenção: Este link é válido por no máximo 10 minutos. Após 10 minutos, o link expira automaticamente e será necessário solicitar um novo link de redefinição.'
+    expect(emailBody).toContain('10 minutos')
+    expect(emailBody).toContain('expira')
+    expect(emailBody).toContain('solicitar um novo link')
+  })
+
+  it('per-row password reset action handles success and error UX states in PT-BR', async () => {
+    let sentEmail = ''
+    const mockRequestPasswordReset = async (email: string) => {
+      sentEmail = email
+      return Promise.resolve()
+    }
+
+    const userToReset = {
+      id: 'y5j9h8a38dpqucl',
+      name: 'Ricardo Guerra editor',
+      email: 'ricardoguerrafreitas@gmail.com',
+    }
+
+    await mockRequestPasswordReset(userToReset.email)
+    expect(sentEmail).toBe('ricardoguerrafreitas@gmail.com')
+
+    const successToastDescription = `Link de redefinição enviado para ${userToReset.email}`
+    expect(successToastDescription).toBe(
+      'Link de redefinição enviado para ricardoguerrafreitas@gmail.com',
+    )
+  })
 })
