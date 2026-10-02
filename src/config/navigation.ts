@@ -8,8 +8,8 @@ export interface RouteConfig {
   lazyComponent: ComponentType
   isNav?: boolean
   navLabel?: string
-  requiredRole?: 'admin' | 'editor'
-  allowedRoles?: ('admin' | 'editor')[]
+  requiredRole?: 'super_admin' | 'admin' | 'editor'
+  allowedRoles?: ('super_admin' | 'admin' | 'editor')[]
 }
 
 export interface NavLinkItem {

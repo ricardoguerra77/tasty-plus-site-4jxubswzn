@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import pb from '@/lib/pocketbase/client'
 import { ClientResponseError } from 'pocketbase'
 
-export type UserRole = 'admin' | 'editor'
+export type UserRole = 'super_admin' | 'admin' | 'editor'
 
 export interface UserProfile {
   id: string
@@ -26,12 +26,14 @@ export interface AuthState {
   isLoading: boolean
   isAdmin: boolean
   isEditor: boolean
+  isSuperAdmin: boolean
 }
 
 export interface UseAuthReturn extends AuthState {
   login: (credentials: LoginCredentials) => Promise<UserProfile>
   logout: () => void
   refreshAuth: () => Promise<void>
+  requestPasswordReset: (email: string) => Promise<void>
 }
 
 /**
@@ -44,7 +46,12 @@ function extractUserProfile(model: unknown): UserProfile | null {
   const email = typeof record.email === 'string' ? record.email : ''
   const name = typeof record.name === 'string' ? record.name : ''
   const rawRole = record.role
-  const role: UserRole = rawRole === 'admin' ? 'admin' : 'editor'
+  let role: UserRole = 'editor'
+  if (rawRole === 'super_admin') {
+    role = 'super_admin'
+  } else if (rawRole === 'admin') {
+    role = 'admin'
+  }
   const avatar = typeof record.avatar === 'string' ? record.avatar : undefined
   const created = typeof record.created === 'string' ? record.created : ''
   const updated = typeof record.updated === 'string' ? record.updated : ''
@@ -151,8 +158,18 @@ export function useAuth(): UseAuthReturn {
     }
   }, [logout])
 
-  const isAdmin = user?.role === 'admin'
-  const isEditor = user?.role === 'editor' || user?.role === 'admin'
+  const isSuperAdmin = user?.role === 'super_admin'
+  const isAdmin = user?.role === 'admin' || isSuperAdmin
+  const isEditor = user?.role === 'editor' || isAdmin
+
+  const requestPasswordReset = useCallback(async (resetEmail: string): Promise<void> => {
+    setIsLoading(true)
+    try {
+      await pb.collection('users').requestPasswordReset(resetEmail.trim())
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   return {
     user,
@@ -161,9 +178,11 @@ export function useAuth(): UseAuthReturn {
     isLoading,
     isAdmin,
     isEditor,
+    isSuperAdmin,
     login,
     logout,
     refreshAuth,
+    requestPasswordReset,
   }
 }
 

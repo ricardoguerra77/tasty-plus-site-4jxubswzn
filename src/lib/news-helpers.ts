@@ -64,10 +64,10 @@ export function filterPublicNews<T extends { published: boolean }>(items: T[]): 
  */
 export function canViewNewsArticle(
   article: { published: boolean } | null | undefined,
-  userRole?: 'admin' | 'editor' | null,
+  userRole?: string | null,
 ): boolean {
   if (!article) return false
-  if (userRole === 'admin' || userRole === 'editor') return true
+  if (userRole === 'admin' || userRole === 'editor' || userRole === 'super_admin') return true
   return Boolean(article.published)
 }
 
@@ -75,13 +75,13 @@ export function canViewNewsArticle(
  * Role guard helper for navigation and tab permissions
  */
 export function canAccessAdmin(userRole?: string | null): boolean {
-  return userRole === 'admin'
+  return userRole === 'admin' || userRole === 'super_admin'
 }
 
 export function canAccessEditorial(userRole?: string | null): boolean {
-  return userRole === 'admin' || userRole === 'editor'
+  return userRole === 'admin' || userRole === 'editor' || userRole === 'super_admin'
 }
 
 export function canManageInstitutional(userRole?: string | null): boolean {
-  return userRole === 'admin'
+  return userRole === 'admin' || userRole === 'super_admin'
 }

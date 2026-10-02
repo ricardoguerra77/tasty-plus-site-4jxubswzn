@@ -1,6 +1,16 @@
 import { useState, type FormEvent, type JSX } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Lock, Mail, Loader2, AlertCircle, ShieldCheck, ArrowRight } from 'lucide-react'
+import {
+  Lock,
+  Mail,
+  Loader2,
+  AlertCircle,
+  ShieldCheck,
+  ArrowRight,
+  KeyRound,
+  ArrowLeft,
+  CheckCircle2,
+} from 'lucide-react'
 import { useAuth, getAuthErrorMessage } from '@/hooks/useAuth'
 import { validateEmail, validateRequired } from '@/lib/validation'
 import { toast } from '@/hooks/use-toast'
@@ -20,12 +30,19 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 export default function Login(): JSX.Element {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, isLoading, isValid, user, logout } = useAuth()
+  const { login, isLoading, isValid, user, logout, requestPasswordReset } = useAuth()
 
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [formErrors, setFormErrors] = useState<{ email?: string; password?: string }>({})
   const [generalError, setGeneralError] = useState<string | null>(null)
+
+  // Forgot password flow states
+  const [isForgotMode, setIsForgotMode] = useState<boolean>(false)
+  const [resetEmail, setResetEmail] = useState<string>('')
+  const [resetError, setResetError] = useState<string | null>(null)
+  const [isResetting, setIsResetting] = useState<boolean>(false)
+  const [resetSubmitted, setResetSubmitted] = useState<boolean>(false)
 
   // Determine post-login redirect path
   const targetPath = (location.state as { from?: string } | null)?.from || '/admin'
@@ -81,6 +98,65 @@ export default function Login(): JSX.Element {
     }
   }
 
+  const handleForgotPasswordSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault()
+    setResetError(null)
+
+    const emailErr = validateEmail(resetEmail)
+    if (emailErr) {
+      setResetError(emailErr)
+      return
+    }
+
+    setIsResetting(true)
+    try {
+      await requestPasswordReset(resetEmail)
+      setResetSubmitted(true)
+      toast({
+        title: 'Solicitação enviada',
+        description: 'Se este e-mail estiver cadastrado, enviaremos as instruções de redefinição.',
+      })
+    } catch (err: unknown) {
+      const rawMsg = err instanceof Error ? err.message.toLowerCase() : ''
+      const isNetworkErr =
+        rawMsg.includes('failed to fetch') ||
+        rawMsg.includes('network') ||
+        rawMsg.includes('conexão') ||
+        rawMsg.includes('conectar')
+      const isSmtpErr =
+        rawMsg.includes('smtp') ||
+        rawMsg.includes('mail') ||
+        rawMsg.includes('email') ||
+        rawMsg.includes('send')
+
+      if (isNetworkErr) {
+        toast({
+          variant: 'destructive',
+          title: 'Falha de conexão',
+          description:
+            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.',
+        })
+      } else if (isSmtpErr) {
+        toast({
+          variant: 'destructive',
+          title: 'Serviço de e-mail indisponível',
+          description:
+            'O serviço de envio de e-mails não está configurado. Por favor, contate o administrador do sistema.',
+        })
+      } else {
+        // Generic safe message (or fallback)
+        toast({
+          title: 'Solicitação enviada',
+          description:
+            'Se este e-mail estiver cadastrado, enviaremos as instruções de redefinição.',
+        })
+        setResetSubmitted(true)
+      }
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
   // If already logged in, provide quick access to admin panel or logout option
   if (isValid && user) {
     return (
@@ -116,86 +192,202 @@ export default function Login(): JSX.Element {
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md shadow-lg border-border">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
-            <Lock className="w-6 h-6" />
-          </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">Acesso Restrito</CardTitle>
-          <CardDescription>
-            Entre com suas credenciais para acessar o painel administrativo da Tasty Aromas e
-            Sabores.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {generalError && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{generalError}</AlertDescription>
-            </Alert>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu.email@tastyplus.com.br"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-9"
-                  disabled={isLoading}
-                  autoComplete="email"
-                  required
-                />
+        {!isForgotMode ? (
+          <>
+            <CardHeader className="space-y-1 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+                <Lock className="w-6 h-6" />
               </div>
-              {formErrors.email && <p className="text-xs text-destructive">{formErrors.email}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-9"
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                  required
-                />
-              </div>
-              {formErrors.password && (
-                <p className="text-xs text-destructive">{formErrors.password}</p>
+              <CardTitle className="text-2xl font-bold tracking-tight">Acesso Restrito</CardTitle>
+              <CardDescription>
+                Entre com suas credenciais para acessar o painel administrativo da Tasty Aromas e
+                Sabores.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {generalError && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{generalError}</AlertDescription>
+                </Alert>
               )}
-            </div>
 
-            <Button
-              type="submit"
-              className="w-full cursor-pointer font-semibold"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Entrando...
-                </>
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                <div className="space-y-2">
+                  <Label htmlFor="email">E-mail</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu.email@tastyplus.com.br"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-9"
+                      disabled={isLoading}
+                      autoComplete="email"
+                      required
+                    />
+                  </div>
+                  {formErrors.email && (
+                    <p className="text-xs text-destructive">{formErrors.email}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Senha</Label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotMode(true)
+                        setResetEmail(email)
+                        setResetError(null)
+                        setResetSubmitted(false)
+                      }}
+                      className="text-xs text-primary hover:underline cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                    >
+                      Esqueci minha senha
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-9"
+                      disabled={isLoading}
+                      autoComplete="current-password"
+                      required
+                    />
+                  </div>
+                  {formErrors.password && (
+                    <p className="text-xs text-destructive">{formErrors.password}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full cursor-pointer font-semibold min-h-[44px]"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Entrando...
+                    </>
+                  ) : (
+                    'Entrar'
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+            <CardFooter className="flex justify-center border-t border-border pt-4">
+              <p className="text-xs text-muted-foreground text-center">
+                Acesso exclusivo para administradores e editores autorizados.
+              </p>
+            </CardFooter>
+          </>
+        ) : (
+          <>
+            <CardHeader className="space-y-1 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+                <KeyRound className="w-6 h-6" />
+              </div>
+              <CardTitle className="text-2xl font-bold tracking-tight">Redefinir Senha</CardTitle>
+              <CardDescription>
+                Informe seu e-mail cadastrado para enviarmos o link de recuperação.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {resetSubmitted ? (
+                <div className="text-center py-4 space-y-4">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <CheckCircle2 className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">Solicitação Enviada</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Se este e-mail estiver cadastrado, enviaremos as instruções de redefinição.
+                      Verifique sua caixa de entrada e pasta de spam.
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full min-h-[44px] cursor-pointer mt-2"
+                    onClick={() => {
+                      setIsForgotMode(false)
+                      setResetSubmitted(false)
+                    }}
+                  >
+                    Voltar ao Login
+                  </Button>
+                </div>
               ) : (
-                'Entrar'
+                <form onSubmit={handleForgotPasswordSubmit} className="space-y-4" noValidate>
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">E-mail Cadastrado</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        placeholder="seu.email@tastyplus.com.br"
+                        value={resetEmail}
+                        onChange={(e) => {
+                          setResetEmail(e.target.value)
+                          if (resetError) setResetError(null)
+                        }}
+                        className="pl-9"
+                        disabled={isResetting}
+                        autoComplete="email"
+                        required
+                      />
+                    </div>
+                    {resetError && <p className="text-xs text-destructive">{resetError}</p>}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full cursor-pointer font-semibold min-h-[44px]"
+                    disabled={isResetting}
+                  >
+                    {isResetting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      'Enviar Instruções'
+                    )}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full min-h-[44px] cursor-pointer flex items-center justify-center gap-2"
+                    disabled={isResetting}
+                    onClick={() => {
+                      setIsForgotMode(false)
+                      setResetError(null)
+                    }}
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Voltar ao formulário de login</span>
+                  </Button>
+                </form>
               )}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center border-t border-border pt-4">
-          <p className="text-xs text-muted-foreground text-center">
-            Acesso exclusivo para administradores e editores autorizados.
-          </p>
-        </CardFooter>
+            </CardContent>
+            <CardFooter className="flex justify-center border-t border-border pt-4">
+              <p className="text-xs text-muted-foreground text-center">
+                Precisa de ajuda imediata? Contate o administrador do sistema.
+              </p>
+            </CardFooter>
+          </>
+        )}
       </Card>
     </div>
   )

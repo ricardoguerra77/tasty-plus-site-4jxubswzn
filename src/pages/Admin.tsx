@@ -4,10 +4,13 @@ import { TabGeneralSettings } from '@/components/admin/TabGeneralSettings'
 import { TabProducts } from '@/components/admin/TabProducts'
 import { TabRepresentatives } from '@/components/admin/TabRepresentatives'
 import { TabNews } from '@/components/admin/TabNews'
-import { Settings, Package, Users, Newspaper } from 'lucide-react'
+import { TabUsers } from '@/components/admin/TabUsers'
+import { useAuth } from '@/hooks/useAuth'
+import { Settings, Package, Users, Newspaper, UserCog } from 'lucide-react'
 
 export default function Admin(): JSX.Element {
   const [activeTab, setActiveTab] = useState<string>('configuracoes')
+  const { isSuperAdmin } = useAuth()
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">
@@ -22,7 +25,11 @@ export default function Admin(): JSX.Element {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1 bg-muted/60">
+        <TabsList
+          className={`grid w-full ${
+            isSuperAdmin ? 'grid-cols-2 md:grid-cols-5' : 'grid-cols-2 md:grid-cols-4'
+          } h-auto p-1 bg-muted/60`}
+        >
           <TabsTrigger
             value="configuracoes"
             className="flex items-center gap-2 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
@@ -51,6 +58,15 @@ export default function Admin(): JSX.Element {
             <Newspaper className="h-4 w-4" />
             <span>Notícias</span>
           </TabsTrigger>
+          {isSuperAdmin && (
+            <TabsTrigger
+              value="usuarios"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
+              <UserCog className="h-4 w-4" />
+              <span>Usuários</span>
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="configuracoes" className="mt-4 focus-visible:outline-none">
@@ -68,6 +84,12 @@ export default function Admin(): JSX.Element {
         <TabsContent value="noticias" className="mt-4 focus-visible:outline-none">
           <TabNews />
         </TabsContent>
+
+        {isSuperAdmin && (
+          <TabsContent value="usuarios" className="mt-4 focus-visible:outline-none">
+            <TabUsers />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   )

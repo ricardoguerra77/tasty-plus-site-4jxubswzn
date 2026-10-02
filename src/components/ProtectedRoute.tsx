@@ -25,13 +25,21 @@ export function ProtectedRoute({
     return <Navigate to="/login" state={{ from: location.pathname }} replace />
   }
 
-  if (requiredRole && user.role !== requiredRole) {
-    // If user lacks required role, redirect to /login
+  // Super admin inherits full access to all protected routes
+  const isSuperAdmin = user.role === 'super_admin'
+
+  if (requiredRole && user.role !== requiredRole && !isSuperAdmin) {
+    // If user lacks required role and is not super_admin, redirect to /login
     return <Navigate to="/login" replace />
   }
 
-  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    // If user's role is not in allowedRoles, redirect to /login
+  if (
+    allowedRoles &&
+    allowedRoles.length > 0 &&
+    !allowedRoles.includes(user.role) &&
+    !isSuperAdmin
+  ) {
+    // If user's role is not in allowedRoles and is not super_admin, redirect to /login
     return <Navigate to="/login" replace />
   }
 

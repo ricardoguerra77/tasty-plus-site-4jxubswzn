@@ -48,9 +48,11 @@ describe('useAuth and Auth Logic', () => {
 
     expect(pb.authStore.isValid).toBe(true)
     const record = pb.authStore.record as { role?: string; name?: string } | null
-    const isAdmin = record?.role === 'admin'
-    const isEditor = record?.role === 'editor' || record?.role === 'admin'
+    const isSuperAdmin = record?.role === 'super_admin'
+    const isAdmin = record?.role === 'admin' || isSuperAdmin
+    const isEditor = record?.role === 'editor' || isAdmin
 
+    expect(isSuperAdmin).toBe(false)
     expect(isAdmin).toBe(true)
     expect(isEditor).toBe(true)
   })
@@ -70,10 +72,36 @@ describe('useAuth and Auth Logic', () => {
 
     expect(pb.authStore.isValid).toBe(true)
     const record = pb.authStore.record as { role?: string; name?: string } | null
-    const isAdmin = record?.role === 'admin'
-    const isEditor = record?.role === 'editor' || record?.role === 'admin'
+    const isSuperAdmin = record?.role === 'super_admin'
+    const isAdmin = record?.role === 'admin' || isSuperAdmin
+    const isEditor = record?.role === 'editor' || isAdmin
 
+    expect(isSuperAdmin).toBe(false)
     expect(isAdmin).toBe(false)
+    expect(isEditor).toBe(true)
+  })
+
+  it('permission flags reflect super_admin role correctly', () => {
+    const superAdminRecord = {
+      id: 'usr_super',
+      collectionId: '_pb_users_auth_',
+      collectionName: 'users',
+      email: 'admin@tastyplus.com.br',
+      name: 'Super Admin',
+      role: 'super_admin',
+      created: '2026-01-01',
+      updated: '2026-01-01',
+    }
+    pb.authStore.save('mock-token-super', superAdminRecord)
+
+    expect(pb.authStore.isValid).toBe(true)
+    const record = pb.authStore.record as { role?: string; name?: string } | null
+    const isSuperAdmin = record?.role === 'super_admin'
+    const isAdmin = record?.role === 'admin' || isSuperAdmin
+    const isEditor = record?.role === 'editor' || isAdmin
+
+    expect(isSuperAdmin).toBe(true)
+    expect(isAdmin).toBe(true)
     expect(isEditor).toBe(true)
   })
 
