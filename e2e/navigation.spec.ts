@@ -26,11 +26,10 @@ test.describe('Tasty Plus Institutional Website - Desktop Navigation & Flow', ()
     // Click "Produtos"
     await nav.getByRole('link', { name: 'Produtos' }).click()
 
-    // Assert URL change and placeholder title appears
+    // Assert URL change and products catalog page appears
     await expect(page).toHaveURL(/\/produtos/)
-    await expect(page.getByRole('heading', { level: 1, name: 'Produtos' })).toBeVisible()
-    await expect(page.getByText('(Conteúdo em breve)')).toBeVisible()
-    await expect(page.getByText('[Catálogo de produtos em breve]')).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Nossos Produtos' })).toBeVisible()
+    await expect(page.getByText('Catálogo Industrial')).toBeVisible()
   })
 
   test('toggle dark mode applies and removes the "dark" class on the <html> element', async ({

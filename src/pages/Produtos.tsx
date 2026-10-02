@@ -3,11 +3,10 @@ import {
   Search,
   MessageCircle,
   Package,
-  Layers,
-  Sparkles,
   AlertTriangle,
   Tag,
   ArrowRight,
+  ShieldCheck,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -15,21 +14,24 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/hooks/use-toast'
 import { useRealtime } from '@/hooks/use-realtime'
-import { listProducts, type Product, type ProductCategory } from '@/services/products'
-import { getFileUrl } from '@/services/siteSettings'
+import {
+  listProducts,
+  PRODUCT_CATEGORIES,
+  type Product,
+  type ProductCategory,
+} from '@/services/products'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
 import { StateFeedback } from '@/components/StateFeedback'
 
-const CATEGORY_TABS: { label: string; value: 'Todos' | ProductCategory }[] = [
-  { label: 'Todos', value: 'Todos' },
+const DEFAULT_SALES_PHONE = '21 98883-1253'
+
+const ALL_CATEGORY_CONFIG: { label: string; value: ProductCategory }[] = [
   { label: 'Aromas', value: 'Aroma' },
   { label: 'Extratos', value: 'Extrato' },
   { label: 'Aditivos', value: 'Aditivo' },
   { label: 'Corantes', value: 'Corante' },
   { label: 'Outro', value: 'Outro' },
 ]
-
-const DEFAULT_SALES_PHONE = '21 98883-1253'
 
 export default function Produtos(): JSX.Element {
   const [products, setProducts] = useState<Product[]>([])
@@ -65,10 +67,48 @@ export default function Produtos(): JSX.Element {
     fetchProducts()
   })
 
-  // Filter products by category and search
+  // Derive categories that have at least one visible published product
+  const availableCategories = useMemo(() => {
+    const counts = new Map<ProductCategory, number>()
+    PRODUCT_CATEGORIES.forEach((cat) => counts.set(cat, 0))
+
+    products.forEach((p) => {
+      if (p.published !== false && p.category) {
+        counts.set(p.category, (counts.get(p.category) ?? 0) + 1)
+      }
+    })
+
+    const tabs: { label: string; value: 'Todos' | ProductCategory; count?: number }[] = [
+      {
+        label: 'Todos',
+        value: 'Todos',
+        count: products.filter((p) => p.published !== false).length,
+      },
+    ]
+
+    ALL_CATEGORY_CONFIG.forEach((cfg) => {
+      const count = counts.get(cfg.value) ?? 0
+      if (count > 0) {
+        tabs.push({ label: cfg.label, value: cfg.value, count })
+      }
+    })
+
+    return tabs
+  }, [products])
+
+  // If activeCategory becomes invalid because no products belong to it anymore, fallback to 'Todos'
+  useEffect(() => {
+    if (activeCategory !== 'Todos') {
+      const exists = availableCategories.some((tab) => tab.value === activeCategory)
+      if (!exists) {
+        setActiveCategory('Todos')
+      }
+    }
+  }, [availableCategories, activeCategory])
+
+  // Filter products by category and search query
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      // Must be published (service already filters published=true, but defensive check)
       if (p.published === false) return false
 
       const matchesCategory = activeCategory === 'Todos' || p.category === activeCategory
@@ -82,32 +122,43 @@ export default function Produtos(): JSX.Element {
     })
   }, [products, activeCategory, searchQuery])
 
-  // Helper for snippet extraction from HTML description
+  // Helper for clean text snippet extraction from HTML description
   const extractSnippet = (htmlDesc?: string): string => {
-    if (!htmlDesc)
+    if (!htmlDesc) {
       return 'Solução desenvolvida sob medida para a indústria com alto rendimento e pureza sensorial.'
+    }
     const text = htmlDesc.replace(/<[^>]*>?/gm, '').trim()
-    if (!text)
+    if (!text) {
       return 'Solução desenvolvida sob medida para a indústria com alto rendimento e pureza sensorial.'
-    return text.length > 120 ? text.slice(0, 117) + '...' : text
+    }
+    return text.length > 150 ? text.slice(0, 147) + '...' : text
   }
 
-  // Category badge color mapper - adhering to Tasty Aromas e Sabores palette
-  const getCategoryBadgeClass = (_category: ProductCategory): string => {
-    return 'bg-accent text-accent-foreground font-semibold border-transparent shadow-sm'
-  }
-
-  // Private label whatsapp quote
+  // Private label franchise whatsapp link
   const privateLabelWhatsAppUrl = buildWhatsAppLink(
     DEFAULT_SALES_PHONE,
     'Olá! Tenho interesse na Marca própria de Whisky e Refrigerante de Cola para franquia.',
   )
 
+  // Single general sales quotation link
+  const generalQuoteWhatsAppUrl = useMemo(() => {
+    const context =
+      activeCategory !== 'Todos'
+        ? ` sobre a linha de ${activeCategory}s`
+        : searchQuery.trim()
+          ? ` sobre itens relacionados a "${searchQuery.trim()}"`
+          : ''
+    return buildWhatsAppLink(
+      DEFAULT_SALES_PHONE,
+      `Olá! Gostaria de solicitar uma cotação comercial${context} da Tasty Aromas e Sabores.`,
+    )
+  }, [activeCategory, searchQuery])
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12 animate-fade-in">
       {/* Header & Title */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full">
+        <Badge className="bg-accent text-accent-foreground font-display font-semibold px-3 py-1 rounded-full shadow-sm">
           Catálogo Industrial
         </Badge>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-primary tracking-tight">
@@ -115,7 +166,8 @@ export default function Produtos(): JSX.Element {
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
           Linhas completas de aromas, extratos vegetais concentrados, corantes e aditivos para a
-          indústria de bebidas, alimentos e confeitaria.
+          indústria de bebidas, alimentos e confeitaria. Formulações com alto rendimento e
+          estabilidade técnica.
         </p>
       </div>
 
@@ -123,7 +175,7 @@ export default function Produtos(): JSX.Element {
       <div className="rounded-2xl bg-[hsl(215,73%,14%)] text-white p-6 md:p-8 border border-primary/30 shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2 text-accent text-xs font-display font-bold uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
+            <ShieldCheck className="w-4 h-4" />
             <span>Oportunidade Exclusiva para Franquias & Distribuidores</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-display font-bold leading-snug">
@@ -146,36 +198,83 @@ export default function Produtos(): JSX.Element {
         </Button>
       </div>
 
+      {/* SINGLE GENERAL QUOTE CTA BANNER */}
+      <div
+        data-testid="quote-cta-banner"
+        className="rounded-2xl border border-accent/30 bg-gradient-to-r from-card via-card to-accent/5 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="w-11 h-11 rounded-xl bg-accent/10 text-accent flex items-center justify-center flex-shrink-0">
+            <MessageCircle className="w-6 h-6" />
+          </div>
+          <div className="space-y-0.5">
+            <h3 className="font-display font-bold text-base sm:text-lg text-primary">
+              Solicite uma cotação personalizada
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Atendimento técnico comercial direto via WhatsApp:{' '}
+              <span className="font-semibold text-foreground">21 98883-1253</span>. Enviamos laudos,
+              amostras e propostas sob medida.
+            </p>
+          </div>
+        </div>
+        <Button
+          asChild
+          size="lg"
+          className="w-full sm:w-auto bg-accent hover:bg-accent-dark text-accent-foreground font-display font-bold shadow-sm whitespace-nowrap min-h-[44px] px-6"
+        >
+          <a
+            href={generalQuoteWhatsAppUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2"
+          >
+            <MessageCircle className="w-4 h-4 flex-shrink-0" />
+            <span>Solicitar Cotação</span>
+          </a>
+        </Button>
+      </div>
+
       {/* SEARCH AND CATEGORY FILTER TABS */}
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Category Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border w-full md:w-auto">
-            {CATEGORY_TABS.map((tab) => (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => setActiveCategory(tab.value)}
-                className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-display font-semibold transition-all cursor-pointer flex-1 md:flex-initial text-center ${
-                  activeCategory === tab.value
-                    ? 'bg-accent text-accent-foreground shadow-sm'
-                    : 'text-foreground/80 hover:text-foreground hover:bg-background/60'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+          {/* Category Tabs (only categories with >= 1 product + Todos) */}
+          <div
+            role="tablist"
+            aria-label="Filtro de categorias de produtos"
+            className="flex flex-wrap items-center gap-1.5 p-1.5 bg-muted/60 rounded-xl border border-border w-full md:w-auto"
+          >
+            {availableCategories.map((tab) => {
+              const isActive = activeCategory === tab.value
+              return (
+                <button
+                  key={tab.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveCategory(tab.value)}
+                  className={`min-h-[44px] px-4 py-2 rounded-lg text-xs sm:text-sm font-display font-semibold transition-all cursor-pointer flex-1 md:flex-initial text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                    isActive
+                      ? 'bg-accent text-accent-foreground shadow-sm'
+                      : 'text-foreground/80 hover:text-foreground hover:bg-background/80'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                </button>
+              )
+            })}
           </div>
 
           {/* Search Box */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar por nome ou sabor..."
-              className="pl-9 text-sm rounded-xl border-border focus-visible:ring-accent"
+              aria-label="Buscar produtos por nome ou sabor"
+              className="pl-10 h-11 text-sm rounded-xl border-border bg-card focus-visible:ring-accent"
             />
           </div>
         </div>
@@ -183,20 +282,22 @@ export default function Produtos(): JSX.Element {
 
       {/* CONTENT: 4 STATES (LOADING / ERROR / EMPTY / SUCCESS) */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-2xl border border-border bg-card p-5 space-y-4 animate-pulse"
+              className="rounded-2xl border border-border bg-card p-6 space-y-3.5 shadow-sm"
             >
-              <Skeleton className="h-44 w-full rounded-xl" />
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-24" />
-                <Skeleton className="h-6 w-3/4" />
+              <div className="flex items-center justify-between gap-2">
+                <Skeleton className="h-5 w-20 rounded-full" />
+                <Skeleton className="h-3 w-8" />
+              </div>
+              <Skeleton className="h-6 w-3/4 rounded-md" />
+              <div className="space-y-2 pt-1">
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-2/3" />
               </div>
-              <Skeleton className="h-10 w-full rounded-lg" />
             </div>
           ))}
         </div>
@@ -224,76 +325,49 @@ export default function Produtos(): JSX.Element {
           }}
         />
       ) : (
-        /* PRODUCT GRID (SUCCESS STATE) */
+        /* PRODUCT GRID (SUCCESS STATE - COMPACT TEXT-FIRST CARDS) */
         <div className="space-y-6">
-          <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground px-1">
             <span>
-              Exibindo <strong>{filteredProducts.length}</strong> produtos
-              {activeCategory !== 'Todos' && ` em ${activeCategory}`}
+              Exibindo <strong className="text-foreground">{filteredProducts.length}</strong>{' '}
+              {filteredProducts.length === 1 ? 'produto' : 'produtos'}
+              {activeCategory !== 'Todos' && (
+                <span>
+                  {' '}
+                  na categoria <strong className="text-foreground">{activeCategory}</strong>
+                </span>
+              )}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div
+            data-testid="products-grid"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
             {filteredProducts.map((product) => {
-              const imageUrl = product.image
-                ? getFileUrl('products', product.id, product.image)
-                : 'https://img.usecurling.com/p/400/300?q=beverage+flavor+bottle&color=slate'
-
-              const whatsappUrl = buildWhatsAppLink(
-                DEFAULT_SALES_PHONE,
-                `Olá! Gostaria de solicitar cotação para o produto: ${product.name}.`,
-              )
-
               return (
-                <div
+                <article
                   key={product.id}
-                  className="rounded-2xl border border-border bg-card hover:border-primary/50 transition-all duration-200 overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md group"
+                  data-testid="product-card"
+                  className="rounded-2xl border border-border bg-card p-5 sm:p-6 hover:border-primary/40 hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-4 group"
                 >
-                  {/* Image header */}
-                  <div className="relative h-44 w-full bg-muted/40 overflow-hidden flex items-center justify-center">
-                    <img
-                      src={imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <Badge
-                        className={`font-semibold rounded-full text-xs px-3 py-1 ${getCategoryBadgeClass(
-                          product.category,
-                        )}`}
-                      >
-                        <Tag className="w-3 h-3 mr-1" />
-                        {product.category}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <Badge className="bg-accent/15 text-accent hover:bg-accent/20 border-transparent font-semibold rounded-full text-xs px-2.5 py-0.5 inline-flex items-center gap-1 shadow-none">
+                        <Tag className="w-3 h-3 flex-shrink-0" />
+                        <span>{product.category}</span>
                       </Badge>
                     </div>
-                  </div>
 
-                  {/* Body content */}
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <h3 className="font-display font-bold text-lg text-foreground leading-snug group-hover:text-accent transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {extractSnippet(product.description)}
-                      </p>
-                    </div>
+                    <h3 className="font-display font-bold text-lg text-primary leading-snug group-hover:text-accent transition-colors">
+                      {product.name}
+                    </h3>
 
-                    {/* WhatsApp Quote Action */}
-                    <div className="pt-2">
-                      <a
-                        href={whatsappUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full inline-flex items-center justify-center gap-2 font-display font-bold text-accent-foreground bg-accent hover:bg-accent-dark active:scale-95 transition-all py-2.5 px-4 rounded-xl text-xs sm:text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        <MessageCircle className="w-4 h-4 flex-shrink-0" />
-                        <span>Solicitar Cotação</span>
-                      </a>
-                    </div>
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      {extractSnippet(product.description)}
+                    </p>
                   </div>
-                </div>
+                </article>
               )
             })}
           </div>
